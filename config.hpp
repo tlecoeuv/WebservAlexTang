@@ -29,6 +29,23 @@ class config {
                 }
             }
         }
+        std::vector<std::string> readConf(std::string conf) {
+            std::string ret;
+            std::vector<std::string> vector;
+            std::ifstream myfile(conf.c_str());
+
+            if (!myfile) {
+                std::cerr << "Error" << std::endl;
+                throw std::out_of_range("Wrong Path");
+            }
+            while (std::getline(myfile, ret, '\n')) {
+                ret = reduce(ret);
+                if (!ret.size())
+                    continue ;
+                vector.push_back(ret);
+            }
+            return (vector);
+        }
         int configLocation(int index, std::vector<std::string> readParam){
             return index;
         }
