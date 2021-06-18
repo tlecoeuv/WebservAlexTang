@@ -12,7 +12,7 @@
 
 std::string reduce(const std::string& str); 
 struct location {
-    std::string method;
+    std::vector<std::string> method;
     std::string root;
     std::string index;
     std::string cgi;
