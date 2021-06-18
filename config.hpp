@@ -1,3 +1,20 @@
+struct location {
+    std::string method;
+    std::string root;
+    std::string index;
+    std::string cgi;
+    std::string cgi_path;
+    std::string max_body;
+};
+
+struct param {
+    std::string port;
+    std::string error;
+    std::string name;
+    std::string host;
+    std::vector<struct location> _location;
+};
+
 class config {
     private:
         std::vector<param> confServer;
