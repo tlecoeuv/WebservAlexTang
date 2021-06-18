@@ -43,7 +43,7 @@ std::vector<std::string> Config::readConf(std::string conf) {
     std::ifstream myfile(conf.c_str());
 
     if (!myfile) {
-        //std::cerr << "Error" << std::endl;
+        std::cerr << "Error" << std::endl;
         throw std::out_of_range("Wrong Path");
     }
     while (std::getline(myfile, ret, '\n')) {

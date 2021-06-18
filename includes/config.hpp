@@ -4,7 +4,6 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include <fcntl.h>
 #include <sstream>
 #include <fstream>
 #include "Server.hpp"
