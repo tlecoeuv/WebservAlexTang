@@ -2,12 +2,12 @@
 #define CONFIG_HPP
 
 #include <iostream>
-
 #include <vector>
 #include <string>
 #include <fcntl.h>
 #include <sstream>
 #include <fstream>
+#include "Server.hpp"
 
 std::string reduce(const std::string& str); 
 struct location {
@@ -19,17 +19,9 @@ struct location {
     std::string max_body;
 };
 
-struct param {
-    std::string port;
-    std::string error;
-    std::string name;
-    std::string host;
-    std::vector<struct location> _location;
-};
-
 class Config {
     private:
-        std::vector<param> confServer;
+        std::vector<Server> confServer;
 
     public:
         Config(std::string conf);

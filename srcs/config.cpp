@@ -1,4 +1,4 @@
-#include "../includes/config.hpp"
+#include "../includes/Config.hpp"
 
 // Constructor config
 Config::Config(std::string conf){
@@ -12,10 +12,12 @@ void Config::parametre(std::string conf){
     for (size_t i = 0; i < readParam.size() ; ){
         //std::cout << readParam.at(i) << std::endl;
         if (readParam.at(i).compare(0, 6, "server") == 0){
-            param newServer;
+            Server newServer;
             while (++i < readParam.size() && readParam.at(i).compare(0, 6, "server") != 0){
-                if (!(readParam.at(i).compare(0, 6, "listen")))
-                    newServer.port = readParam.at(i).substr(7);
+                if (!(readParam.at(i).compare(0, 6, "listen"))){
+                    
+                    newServer.port = std::stoi(readParam.at(i).substr(7));
+                }
                 else if (!(readParam.at(i).compare(0, 5, "error")))
                     newServer.error = readParam.at(i).substr(6);
                 else if (!(readParam.at(i).compare(0, 4, "name")))

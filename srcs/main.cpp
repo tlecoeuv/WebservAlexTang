@@ -1,9 +1,7 @@
 #include <iostream>
 #include <unistd.h>
-#include <string>
-#include <fcntl.h>
 
-#include "../includes/config.hpp"
+#include "../includes/Config.hpp"
 
 void error(std::exception& ex)
 {
