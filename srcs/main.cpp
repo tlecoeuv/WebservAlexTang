@@ -3,7 +3,7 @@
 #include <string>
 #include <fcntl.h>
 
-#include "config.hpp"
+#include "../includes/config.hpp"
 
 void error(std::exception& ex)
 {
