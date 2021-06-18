@@ -10,14 +10,6 @@
 #include "Server.hpp"
 
 std::string reduce(const std::string& str); 
-struct location {
-    std::vector<std::string> method;
-    std::string root;
-    std::string index;
-    std::string cgi;
-    std::string cgi_path;
-    std::string max_body;
-};
 
 class Config {
     private:
