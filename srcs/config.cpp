@@ -10,11 +10,9 @@ void Config::parametre(std::string conf){
     std::vector<std::string> readParam;
     readParam = readConf(conf);
     for (size_t i = 0; i < readParam.size() ; ){
-        //std::cout << readParam.at(i) << std::endl;
         if (readParam.at(i).compare(0, 6, "server") == 0){
             Server newServer;
             while (++i < readParam.size() && readParam.at(i).compare(0, 6, "server") != 0){
-                //std::cout << "begin:\t\t" << readParam.at(i) << std::endl;
                 if (!(readParam.at(i).compare(0, 6, "listen")))
                     newServer.port = std::stoi(readParam.at(i).substr(7));
                 else if (!(readParam.at(i).compare(0, 5, "error")))

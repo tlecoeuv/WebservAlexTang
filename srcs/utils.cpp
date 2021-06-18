@@ -1,8 +1,5 @@
-#include <sys/socket.h>
 #include <iostream>
 #include <unistd.h>
-#include <string>
-#include <fcntl.h>
 
 std::string trim(const std::string& str, const std::string& whitespace) {
     size_t begin = str.find_first_not_of(whitespace);
