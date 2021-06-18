@@ -1,5 +1,10 @@
-std::string trim(const std::string& str, const std::string& whitespace = " \t") {
-    
+#include <sys/socket.h>
+#include <iostream>
+#include <unistd.h>
+#include <string>
+#include <fcntl.h>
+
+std::string trim(const std::string& str, const std::string& whitespace) {
     size_t begin = str.find_first_not_of(whitespace);
     if (begin == std::string::npos)
         return "";
@@ -8,8 +13,10 @@ std::string trim(const std::string& str, const std::string& whitespace = " \t") 
     return str.substr(begin, range);
 }
 
-std::string reduce(const std::string& str, const std::string& fill = " ", const std::string& whitespace = " \t")
+std::string reduce(const std::string& str)
 {
+    const std::string& fill = " ";
+    const std::string& whitespace = " \t";
     std::string result = trim(str, whitespace);
     size_t begin = result.find_first_of(whitespace);
     while (begin != std::string::npos) {

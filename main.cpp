@@ -1,3 +1,10 @@
+#include <iostream>
+#include <unistd.h>
+#include <string>
+#include <fcntl.h>
+
+#include "config.hpp"
+
 void error(std::exception& ex)
 {
 	std::cerr << "Error " << ex.what() << std::endl;
