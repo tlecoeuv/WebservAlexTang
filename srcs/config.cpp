@@ -14,10 +14,8 @@ void Config::parametre(std::string conf){
         if (readParam.at(i).compare(0, 6, "server") == 0){
             Server newServer;
             while (++i < readParam.size() && readParam.at(i).compare(0, 6, "server") != 0){
-                if (!(readParam.at(i).compare(0, 6, "listen"))){
-                    
+                if (!(readParam.at(i).compare(0, 6, "listen")))
                     newServer.port = std::stoi(readParam.at(i).substr(7));
-                }
                 else if (!(readParam.at(i).compare(0, 5, "error")))
                     newServer.error = readParam.at(i).substr(6);
                 else if (!(readParam.at(i).compare(0, 4, "name")))
