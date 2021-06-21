@@ -1,8 +1,9 @@
 #ifndef HEADER_HPP
 #define HEADER_HPP
 #include <string>
+#include <vector>
 
-
+std::vector<std::string> fileToVector(std::string file);
 //https://maximilienandile.github.io/2016/09/30/Comprendre-les-headers-d-une-requete-HTTP/
 class Header {
     public:
