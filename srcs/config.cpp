@@ -10,7 +10,7 @@ Config::Config(std::string conf){
 void Config::parametre(std::string conf){
     std::vector<std::string> readParam;
 
-    readParam = readConf(conf);
+    readParam = fileToVector(conf);
     for (size_t i = 0; i < readParam.size() ; ){
         if (readParam.at(i).compare(0, 6, "server") == 0){
 			if (readParam.at(i).size() < 8 && readParam.at(i)[readParam.at(i).size() - 1] != '{')
@@ -127,25 +127,6 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
     }
     newServer.locations.push_back(newLocation);
     return index;
-}
-
-// save .conf
-std::vector<std::string> Config::readConf(std::string conf) {
-	std::string ret;
-	std::vector<std::string> vector;
-	std::ifstream myfile(conf.c_str());
-
-    if (!myfile) {
-        std::cerr << "Error" << std::endl;
-        throw std::out_of_range("Wrong Path");
-    }
-    while (std::getline(myfile, ret, '\n')) {
-        ret = reduce(ret);
-        if (!ret.size())
-            continue ;
-        vector.push_back(ret);
-    }
-    return (vector);
 }
 
 std::vector<Server> Config::getServer(){

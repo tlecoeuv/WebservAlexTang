@@ -7,7 +7,7 @@
 #include <fstream>
 #include "Server.hpp"
 
-std::string reduce(const std::string& str); 
+std::vector<std::string> fileToVector(std::string file);
 
 class Config {
     private:
