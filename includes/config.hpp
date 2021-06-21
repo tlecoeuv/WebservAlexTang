@@ -12,9 +12,11 @@ std::string reduce(const std::string& str);
 class Config {
     private:
         std::vector<Server> confServer;
-
     public:
         Config(std::string conf);
+        std::vector<Server> getServer();
+        //print();
+    private:
         void parametre(std::string conf);
         std::vector<std::string> readConf(std::string conf);
         int configLocation(int index, std::vector<std::string> readParam, Server &newServer);

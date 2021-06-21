@@ -47,7 +47,7 @@ void Config::parametre(std::string conf){
 					else
 						throw std::out_of_range("No location");
 				}
-				else if (readParam.at(i).compare(0, 1, "}")) {
+				else if (i >= readParam.size() || readParam.at(i).compare(0, 1, "}")) {
 					std::cout << "Error: " << readParam.at(i) << std::endl;
 					throw std::out_of_range("Wrong parameter");
 				}
@@ -148,7 +148,9 @@ std::vector<std::string> Config::readConf(std::string conf) {
     return (vector);
 }
 
-
+std::vector<Server> Config::getServer(){
+	return confServer;
+}
 
 void Config::checkConfig(){
 	if (!confServer.size())
