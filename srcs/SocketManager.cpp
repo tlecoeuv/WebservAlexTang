@@ -62,14 +62,9 @@ void	SocketManager::start_servers(void)
 
 	char *hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!";
 
-	std::cout << "servers: size: " << servers.size() << std::endl;
-	std::cout << "pollfds: size: " << pfds.size() << std::endl;
-	std::cout << servers[0].sd << " " << pfds[0].fd << std::endl;
 	for(;;)
 	{
 		poll_count = poll(&pfds[0], pfds.size(), -1);
-		std::cout << "poll_count " << poll_count << std::endl;
-
 		if (poll_count == -1)
 		{
             perror("poll");
@@ -79,12 +74,8 @@ void	SocketManager::start_servers(void)
 		{
 			if (pfds[i].revents & POLLIN)
 			{
-				std::cout << "yo we catch so;ething" << std::endl;
-				std::cout << "i: " << i << "fd: " << pfds[i].fd << std::endl;
-
 				if ((listener_fd = is_server_fd(pfds[i].fd)) >= 0)
 				{
-					std::cout << "yo connection!" << std::endl;
 					addrlen = sizeof remoteaddr;
 					newfd = accept(listener_fd,(struct sockaddr *)&remoteaddr,
                         			&addrlen);
@@ -93,7 +84,6 @@ void	SocketManager::start_servers(void)
 					else
 					{
 						add_to_pfds(newfd);
-						std::cout << "new connection, fd: " << newfd << std::endl;
 						send(newfd, hello, strlen(hello), 0);
 					}
 				}
@@ -112,9 +102,7 @@ void	SocketManager::start_servers(void)
                         }
 
                         close(pfds[i].fd); // Bye!
-
                         del_from_pfds(i);
-
                     }
 				}
 			}
