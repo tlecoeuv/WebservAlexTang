@@ -2,27 +2,55 @@
 
 // Constructor config
 Config::Config(std::string conf){
-     parametre(conf);
+    parametre(conf);
+	checkConfig();
 }
 
 //save param of server
 void Config::parametre(std::string conf){
     std::vector<std::string> readParam;
+
     readParam = readConf(conf);
     for (size_t i = 0; i < readParam.size() ; ){
         if (readParam.at(i).compare(0, 6, "server") == 0){
+			if (readParam.at(i).size() < 8 && readParam.at(i)[readParam.at(i).size() - 1] != '{')
+				throw std::out_of_range("No server");
             Server newServer;
             while (++i < readParam.size() && readParam.at(i).compare(0, 6, "server") != 0){
-                if (!(readParam.at(i).compare(0, 6, "listen")))
-                    newServer.port = std::stoi(readParam.at(i).substr(7));
-                else if (!(readParam.at(i).compare(0, 5, "error")))
-                    newServer.error = readParam.at(i).substr(6);
-                else if (!(readParam.at(i).compare(0, 4, "name")))
-                    newServer.name = readParam.at(i).substr(5);
-                else if (!(readParam.at(i).compare(0, 4, "host")))
-                    newServer.host = readParam.at(i).substr(5);
-                else if (!(readParam.at(i).compare(0, 8, "location")))
-                    i = configLocation(i, readParam, newServer);
+                if (!(readParam.at(i).compare(0, 6, "listen"))){
+					if (readParam.at(i).size() > 6  && readParam.at(i).substr(7).find_first_not_of("0123456789") == std::string::npos)
+                    	 newServer.port = std::stoi(readParam.at(i).substr(7));
+					else
+						throw std::out_of_range("No listen");
+				}
+                else if (!(readParam.at(i).compare(0, 5, "error"))){
+					if (readParam.at(i).size() > 5)
+                    	newServer.error = readParam.at(i).substr(6);
+					else
+						throw std::out_of_range("No error");
+				}
+                else if (!(readParam.at(i).compare(0, 4, "name"))){
+					if (readParam.at(i).size() > 4)
+                    	newServer.name = readParam.at(i).substr(5);
+					else
+						throw std::out_of_range("No name");
+				}
+                else if (!(readParam.at(i).compare(0, 4, "host"))){
+					if (readParam.at(i).size() > 4)
+                    	newServer.name = readParam.at(i).substr(5);
+					else
+						throw std::out_of_range("No host");
+				}
+                else if (!(readParam.at(i).compare(0, 8, "location"))){
+					if (readParam.at(i).size() > 8 && readParam.at(i)[readParam.at(i).size() - 1] == '{')
+                    	i = configLocation(i, readParam, newServer);
+					else
+						throw std::out_of_range("No location");
+				}
+				else if (readParam.at(i).compare(0, 1, "}")) {
+					std::cout << "Error: " << readParam.at(i) << std::endl;
+					throw std::out_of_range("Wrong parameter");
+				}
             }
             confServer.push_back(newServer);
         }
@@ -32,32 +60,64 @@ void Config::parametre(std::string conf){
 //save param of location
 int Config::configLocation(int index, std::vector<std::string> readParam, Server &newServer){
     Location newLocation;
+
     while (readParam.at(++index).size() && readParam.at(index).compare(0, 1, "}")){
-        if ((!readParam.at(index).compare(0, 5, "index")))
-            newLocation.index = readParam.at(index).substr(6);
-        else if ((!readParam.at(index).compare(0, 10, "auto_index")))
-            newLocation.auto_index = std::stoi(readParam.at(index).substr(11));
-        else if ((!readParam.at(index).compare(0, 4, "root")))
-            newLocation.root = readParam.at(index).substr(5);
-        else if ((!readParam.at(index).compare(0, 3, "cgi")))
-            newLocation.cgi = readParam.at(index).substr(4);
-        else if ((!readParam.at(index).compare(0, 8, "cgi_path")))
-            newLocation.cgi_path = readParam.at(index).substr(9);
-        else if ((!readParam.at(index).compare(0, 8, "max_body")))
-            newLocation.max_body = readParam.at(index).substr(9);
-        else if ((!readParam.at(index).compare(0, 4, "auth")))
-            newLocation.auth = readParam.at(index).substr(5);
+        if ((!readParam.at(index).compare(0, 5, "index"))){
+			if (readParam.at(index).size() > 5)
+            	newLocation.index = readParam.at(index).substr(6);
+			else
+				throw std::out_of_range("No index");
+		}
+        else if ((!readParam.at(index).compare(0, 10, "auto_index"))){
+			if (readParam.at(index).size() > 10)
+            	newLocation.auto_index = std::stoi(readParam.at(index).substr(11));
+			else
+				throw std::out_of_range("No auto_index");
+		}
+        else if ((!readParam.at(index).compare(0, 4, "root"))){
+			if (readParam.at(index).size() > 4)
+            	newLocation.root = readParam.at(index).substr(5);
+			else
+				throw std::out_of_range("No root");
+		}
+        else if ((!readParam.at(index).compare(0, 3, "cgi"))){
+			if (readParam.at(index).size() > 3)
+            	newLocation.cgi = readParam.at(index).substr(4);
+			else
+				throw std::out_of_range("No cgi");
+		}
+        else if ((!readParam.at(index).compare(0, 8, "cgi_path"))){
+			if (readParam.at(index).size() > 8)
+            	newLocation.cgi_path = readParam.at(index).substr(9);
+			else
+				throw std::out_of_range("No cgi_path");
+		}
+        else if ((!readParam.at(index).compare(0, 8, "max_body"))){
+			if (readParam.at(index).size() > 8)
+            	newLocation.max_body = readParam.at(index).substr(9);
+			else
+				throw std::out_of_range("No max_body");
+		}
+        else if ((!readParam.at(index).compare(0, 4, "auth"))){
+			if (readParam.at(index).size() > 4)
+            	newLocation.auth = readParam.at(index).substr(5);
+			else
+				throw std::out_of_range("No auth");
+		}
         else if ((!readParam.at(index).compare(0, 6, "method"))){
-            for (size_t i = 7; readParam.at(index)[i] ;){
-                std::string newMethod;
-                size_t j = i;
-                while(i < readParam.at(index).size() && readParam.at(index)[i] != ' ')
-                    i++;
-                newMethod = readParam.at(index).substr(j, i - j);
-                newLocation.method.push_back(newMethod);
-                if (readParam.at(index).size() && readParam.at(index)[i] == ' ')
-                    i++;
-            }
+			if (readParam.at(index).size() > 6)
+				for (size_t i = 7; readParam.at(index)[i] ;){
+					std::string newMethod;
+					size_t j = i;
+					while(i < readParam.at(index).size() && readParam.at(index)[i] != ' ')
+						i++;
+					newMethod = readParam.at(index).substr(j, i - j);
+					newLocation.method.push_back(newMethod);
+					if (readParam.at(index).size() && readParam.at(index)[i] == ' ')
+						i++;
+				}
+			else
+				throw std::out_of_range("No method");
             
         }
         else {
@@ -71,9 +131,9 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 
 // save .conf
 std::vector<std::string> Config::readConf(std::string conf) {
-    std::string ret;
-    std::vector<std::string> vector;
-    std::ifstream myfile(conf.c_str());
+	std::string ret;
+	std::vector<std::string> vector;
+	std::ifstream myfile(conf.c_str());
 
     if (!myfile) {
         std::cerr << "Error" << std::endl;
@@ -86,4 +146,14 @@ std::vector<std::string> Config::readConf(std::string conf) {
         vector.push_back(ret);
     }
     return (vector);
+}
+
+
+
+void Config::checkConfig(){
+	if (!confServer.size())
+		throw std::out_of_range("No Server");
+	for (size_t i = 0; i < confServer.size(); ++i){
+
+	}
 }
