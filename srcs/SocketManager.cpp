@@ -107,6 +107,7 @@ void	SocketManager::start_servers(void)
                     }
 					else
 					{
+						printf("#####buf\n");
 						printf("%s\n", buf);
 					}
 				}
