@@ -1,4 +1,5 @@
 #include "../includes/SocketManager.hpp"
+#include "../includes/Request.hpp"
 
 /* Constructors and Destructors: */
 
@@ -107,8 +108,11 @@ void	SocketManager::start_servers(void)
                     }
 					else
 					{
+						buf[nbytes] = '\0';
+						Request request(buf);
 						printf("#####buf\n");
-						printf("%s\n", buf);
+						printf("-%s-\n", buf);
+						
 					}
 				}
 			}

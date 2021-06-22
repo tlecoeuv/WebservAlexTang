@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-std::vector<std::string> fileToVector(std::string file);
+std::vector<std::string> fileToVector(std::string file, int conf);
 //https://maximilienandile.github.io/2016/09/30/Comprendre-les-headers-d-une-requete-HTTP/
 class Header {
     public:
@@ -20,8 +20,9 @@ class Header {
         std::string cookie;
         std::string ifModifiedSince;
 
-        Header(std::string requestHeader);
-        ~Header();
+        void fill(std::string buf);
+
+        Header();
 };
 
 #endif

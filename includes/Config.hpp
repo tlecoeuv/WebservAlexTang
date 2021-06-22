@@ -10,7 +10,7 @@
 /* Includes: */
 #include "Server.hpp"
 
-std::vector<std::string> fileToVector(std::string file);
+std::vector<std::string> fileToVector(std::string file, int conf);
 
 class Config {
     public:

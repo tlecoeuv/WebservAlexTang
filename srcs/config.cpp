@@ -10,7 +10,7 @@ Config::Config(std::string conf){
 void Config::parametre(std::string conf){
     std::vector<std::string> readParam;
 
-    readParam = fileToVector(conf);
+    readParam = fileToVector(conf, 1);
     for (size_t i = 0; i < readParam.size() ; ){
         if (readParam.at(i).compare(0, 6, "server") == 0){
 			if (readParam.at(i).size() < 8 && readParam.at(i)[readParam.at(i).size() - 1] != '{')

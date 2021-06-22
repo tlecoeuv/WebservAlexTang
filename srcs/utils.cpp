@@ -28,12 +28,12 @@ std::string reduce(const std::string& str)
     return result;
 }
 
-std::vector<std::string> fileToVector(std::string file) {
+std::vector<std::string> fileToVector(std::string file, int conf) {
 	std::string ret;
 	std::vector<std::string> vector;
 	std::ifstream myfile(file.c_str());
 
-    if (!myfile) {
+    if (conf && !myfile) {
         std::cerr << "Error" << std::endl;
         throw std::out_of_range("Wrong Path");
     }
