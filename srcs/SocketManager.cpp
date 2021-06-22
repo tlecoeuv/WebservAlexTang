@@ -92,7 +92,8 @@ void	SocketManager::start_servers(void)
 					int nbytes = recv(pfds[i].fd, buf, sizeof buf, 0);
 					int sender_fd = pfds[i].fd;
 
-					if (nbytes <= 0) {
+					if (nbytes <= 0)
+					{
                         // Got error or connection closed by client
                         if (nbytes == 0) {
                             // Connection closed
@@ -104,6 +105,10 @@ void	SocketManager::start_servers(void)
                         close(pfds[i].fd); // Bye!
                         del_from_pfds(i);
                     }
+					else
+					{
+						printf("%s\n", buf);
+					}
 				}
 			}
 		}
