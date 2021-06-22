@@ -12,9 +12,9 @@
 class		Server
 {
 public:
-
+	Server() {};
 	Server(int p, std::string h, std::string n, std::string e, std::vector<Location> loc);
-	~Server(void);
+	~Server() {};
 
 	int							port;
 	std::string					host;

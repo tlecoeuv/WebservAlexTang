@@ -7,7 +7,4 @@ Server::Server(int p, std::string h, std::string n, std::string e,
 		: port(p), host(h), name(n), error(e), locations(loc)
 {}
 
-Server::~Server(void)
-{}
-
 /* other methods: */

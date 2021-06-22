@@ -14,7 +14,9 @@ NAME = webserv
 
 SRC = main.cpp \
 		config.cpp \
+		SocketManager.cpp \
 		utils.cpp \
+		Server.cpp \
 
 ### Librairies ###
 HEADERS = ./include/

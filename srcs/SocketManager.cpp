@@ -43,7 +43,7 @@ void	SocketManager::del_from_pfds(int i)
 
 int		SocketManager::is_server_fd(int fd)
 {
-	for (int i = 0; i < servers.size(); i++)
+	for (size_t i = 0; i < servers.size(); i++)
 	{
 		if (servers[i].sd == fd)
 			return(servers[i].sd);
@@ -60,7 +60,7 @@ void	SocketManager::start_servers(void)
 	char 					buf[256];
 	int						listener_fd;
 
-	char *hello = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!";
+	char *hello = (char *)"HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!";
 
 	for(;;)
 	{
@@ -70,7 +70,7 @@ void	SocketManager::start_servers(void)
             perror("poll");
             exit(1);
         }
-		for(int i = 0; i < pfds.size(); i++)
+		for(size_t i = 0; i < pfds.size(); i++)
 		{
 			if (pfds[i].revents & POLLIN)
 			{
