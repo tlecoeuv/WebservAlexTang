@@ -6,9 +6,11 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <netdb.h>
 
 /* Includes: */
 #include "Location.hpp"
+#include "../includes/Request.hpp"
 
 class		Server
 {
@@ -27,7 +29,7 @@ public:
 	int							sd;
 
 private:
-
+	void get_buffer_request(int fd);
 };
 
 #endif

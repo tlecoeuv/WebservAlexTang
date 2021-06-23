@@ -5,6 +5,7 @@ Header::Header(){}
 void Header::fill(std::string buf){
     std::vector<std::string> readHeader;
 
+    std::cout << buf << std::endl << std::endl;
     readHeader = fileToVector(buf, 0);
     for (size_t i = 0; i < readHeader.size() ; ){
         if (!(readHeader.at(i).compare(0, 3, "GET")))
