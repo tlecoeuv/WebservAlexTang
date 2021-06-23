@@ -19,7 +19,8 @@ public:
 	Server(int p, std::string h, std::string n, std::string e, std::vector<Location> loc);
 	~Server() {};
 
-	void	handleRequest(int client_fd);
+	Request	getRequest(int client_fd);
+	void	handleRequest(Request request);
 
 	int							port;
 	std::string					host;
