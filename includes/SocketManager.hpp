@@ -35,7 +35,7 @@ private:
 
 	void	add_to_pfds(int newfd);
 	void	del_from_pfds(int i);
-	int		is_server_fd(int fd);
+	int		get_index_server(int fd);
 	int 	create_server_socket(Server &server);
 };
 
