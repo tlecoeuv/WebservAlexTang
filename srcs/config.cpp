@@ -21,25 +21,25 @@ void Config::parametre(std::string conf){
 					if (readParam.at(i).size() > 6  && readParam.at(i).substr(7).find_first_not_of("0123456789") == std::string::npos)
                     	 newServer.port = std::stoi(readParam.at(i).substr(7));
 					else
-						throw std::out_of_range("No listen");
+						throw std::out_of_range("Listen has no value");
 				}
                 else if (!(readParam.at(i).compare(0, 5, "error"))){
 					if (readParam.at(i).size() > 5)
                     	newServer.error = readParam.at(i).substr(6);
 					else
-						throw std::out_of_range("No error");
+						throw std::out_of_range("Error has no value");
 				}
                 else if (!(readParam.at(i).compare(0, 4, "name"))){
 					if (readParam.at(i).size() > 4)
                     	newServer.name = readParam.at(i).substr(5);
 					else
-						throw std::out_of_range("No name");
+						throw std::out_of_range("Name has no value");
 				}
                 else if (!(readParam.at(i).compare(0, 4, "host"))){
 					if (readParam.at(i).size() > 4)
                     	newServer.name = readParam.at(i).substr(5);
 					else
-						throw std::out_of_range("No host");
+						throw std::out_of_range("Host has no value");
 				}
                 else if (!(readParam.at(i).compare(0, 8, "location"))){
 					if (readParam.at(i).size() > 8 && readParam.at(i)[readParam.at(i).size() - 1] == '{')

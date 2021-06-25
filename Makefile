@@ -16,9 +16,9 @@ SRC = main.cpp \
 		config.cpp \
 		SocketManager.cpp \
 		request.cpp \
-		header.cpp \
 		utils.cpp \
 		Server.cpp \
+		Reponse.cpp \
 
 ### Librairies ###
 HEADERS = ./include/

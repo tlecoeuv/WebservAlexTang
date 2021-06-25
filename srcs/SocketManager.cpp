@@ -1,5 +1,4 @@
 #include "../includes/SocketManager.hpp"
-#include "../includes/Request.hpp"
 
 /* Constructors and Destructors: */
 

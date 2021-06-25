@@ -10,7 +10,8 @@
 
 /* Includes: */
 #include "Location.hpp"
-#include "../includes/Request.hpp"
+#include "Request.hpp"
+#include "Reponse.hpp"
 
 class		Server
 {
@@ -28,6 +29,7 @@ public:
 	std::string					error;
 	std::vector<Location>		locations;
 	Request						request;
+	Reponse						reponse;
 	int							sd;
 
 private:

@@ -3,6 +3,7 @@
 
 #include "Server.hpp"
 #include "Location.hpp"
+#include "Request.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
