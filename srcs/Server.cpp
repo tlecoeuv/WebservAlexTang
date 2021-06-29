@@ -31,17 +31,16 @@ void Server::getRequest(int client_fd){
 
 void	Server::handleRequest(int client_fd)
 {
-//	char* buf[1000];
-	std::cout << "new connection on fd: " << client_fd << std::endl;
-	getRequest(client_fd);
-	reponse.makeReponse(request);
-	write(client_fd , reponse.header.c_str() , reponse.header.size());
+	char* buf[1000];
+	// std::cout << "new connection on fd: " << client_fd << std::endl;
+	// getRequest(client_fd);
+	// reponse.makeReponse(request);
+	// write(client_fd , reponse.header.c_str() , reponse.header.size());
+	// std::cout << "client request:\n________________________\n" << std::endl;
+	// std::cout << request.method << std::endl;
+	// std::cout << request.host << std::endl;
+	recv(client_fd, buf, sizeof buf, 0);
 	std::cout << "client request:\n________________________\n" << std::endl;
-	std::cout << request.method << std::endl;
-	std::cout << request.host << std::endl;
-/*	int nbytes = recv(client_fd, buf, sizeof buf, 0);
-	buf[nbytes] = '\0';
-	std::cout << "client request:\n________________________\n" << std::endl;
-	std::cout << buf << std::endl;*/
+	std::cout << buf << std::endl;
 	//send response to client here.
 }

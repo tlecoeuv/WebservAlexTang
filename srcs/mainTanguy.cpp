@@ -9,7 +9,7 @@ int		main()
 	std::vector<Location>	locations;
 
 	Server		testServ(8080, host, name, error, locations);
-	SocketManager	manager;
+	ServerManager	manager;
 
 	manager.add_server(testServ);
 	manager.start_servers();

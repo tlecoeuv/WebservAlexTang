@@ -3,7 +3,7 @@
 
 #include "../includes/Config.hpp"
 #include "../includes/Server.hpp"
-#include "../includes/SocketManager.hpp"
+#include "../includes/ServerManager.hpp"
 
 void end(int signal)
 {
@@ -19,7 +19,7 @@ void error(std::exception& ex)
 
 int main(int argc, char **argv)
 {
-	SocketManager	manager;
+	ServerManager	manager;
     if (argc != 2)
         exit(0);
     try {

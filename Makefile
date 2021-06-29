@@ -14,7 +14,7 @@ NAME = webserv
 
 SRC = main.cpp \
 		config.cpp \
-		SocketManager.cpp \
+		ServerManager.cpp \
 		request.cpp \
 		utils.cpp \
 		Server.cpp \
