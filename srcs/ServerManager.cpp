@@ -61,7 +61,7 @@ void	ServerManager::start_servers(void)
 					{
 						write(0, buf, nbytes);
 					}
-					
+					//servers[0].reponse.makeReponse(servers[0].request, servers[0].locations);
 					//clientInfo client = getClientByFd(pfds[i].fd);
 					//client.server.handleRequest(client.fd);
 					//find wich server is related to this client.

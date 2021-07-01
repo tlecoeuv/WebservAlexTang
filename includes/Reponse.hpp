@@ -7,6 +7,7 @@
 #include <map>
 
 #include "Request.hpp"
+#include "Location.hpp"
 
 class 	Reponse {
     public:
@@ -14,8 +15,9 @@ class 	Reponse {
 
     public:
         Reponse(){};
-		void makeReponse(Request request);
-        void get(std::map<std::string, std::string> info);
+		void makeReponse(Request request, std::map<std::string, Location> locations);
+        void get(std::map<std::string, std::string> info, Request request);
+        std::string _getMIMEType(std::string filename);
 };
 
 #endif
