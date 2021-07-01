@@ -4,7 +4,7 @@
 /* Constructors and Destructors: */
 
 Server::Server(int p, std::string h, std::string n, std::string e,
-				std::vector<Location> loc)
+				std::map<std::string, Location> loc)
 		: port(p), host(h), name(n), error(e), locations(loc)
 {}
 

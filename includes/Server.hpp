@@ -17,7 +17,7 @@ class		Server
 {
 public:
 	Server() {};
-	Server(int p, std::string h, std::string n, std::string e, std::vector<Location> loc);
+	Server(int p, std::string h, std::string n, std::string e, std::map<std::string, Location> loc);
 	~Server() {};
 
 	void	getRequest(int client_fd);
