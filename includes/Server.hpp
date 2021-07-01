@@ -23,14 +23,14 @@ public:
 	void	getRequest(int client_fd);
 	void	handleRequest(int client_fd);
 
-	int							port;
-	std::string					host;
-	std::string					name;
-	std::string					error;
-	std::vector<Location>		locations;
-	Request						request;
-	Reponse						reponse;
-	int							sd;
+	int									port;
+	std::string							host;
+	std::string							name;
+	std::string							error;
+	std::map<std::string, Location>		locations;
+	Request								request;
+	Reponse								reponse;
+	int									sd;
 
 private:
 	void get_buffer_request(int fd);

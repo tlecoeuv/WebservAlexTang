@@ -61,6 +61,16 @@ void Config::parametre(std::string conf){
 int Config::configLocation(int index, std::vector<std::string> readParam, Server &newServer){
     Location newLocation;
 
+	std::string path;
+	if (!readParam.at(index).compare(9, 2, "/ ")){
+		path = "/";
+	}
+	else if (!readParam.at(index).compare(9, 1, "/")){
+		path = readParam.at(index).substr(9);
+		path.erase(path.end() - 1, path.end());
+	}
+	else 
+		throw std::out_of_range("No location path");
     while (readParam.at(++index).size() && readParam.at(index).compare(0, 1, "}")){
         if ((!readParam.at(index).compare(0, 5, "index"))){
 			if (readParam.at(index).size() > 5)
@@ -125,7 +135,7 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
             throw std::out_of_range("Wrong Location");
         }
     }
-    newServer.locations.push_back(newLocation);
+    newServer.locations["test"] = newLocation;
     return index;
 }
 

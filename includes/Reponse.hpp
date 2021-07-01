@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <map>
 
 #include "Request.hpp"
 
@@ -14,6 +15,7 @@ class 	Reponse {
     public:
         Reponse(){};
 		void makeReponse(Request request);
+        void get(std::map<std::string, std::string> info);
 };
 
 #endif
