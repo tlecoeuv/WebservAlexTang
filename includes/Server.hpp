@@ -7,6 +7,7 @@
 #include <vector>
 #include <iostream>
 #include <netdb.h>
+#include <poll.h>
 
 /* Includes: */
 #include "Location.hpp"
@@ -31,6 +32,7 @@ public:
 	Request								request;
 	Reponse								reponse;
 	int									sd;
+	struct pollfd						*pfd;
 
 private:
 	void get_buffer_request(int fd);
