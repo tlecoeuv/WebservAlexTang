@@ -24,7 +24,6 @@ void	ServerManager::add_server(Server &server)
 void	ServerManager::start_servers(void)
 {
 	int 					poll_count;
-	char					buf[1000];
 
 	for(;;)
 	{
@@ -36,7 +35,12 @@ void	ServerManager::start_servers(void)
             perror("poll");
             exit(1);
         }
-		for(size_t i = 0; i < pfds.size(); i++)
+		checkServerSocket();
+		checkClientSocket();
+	}
+}
+
+		/*for(size_t i = 0; i < pfds.size(); i++)
 		{
 			if (pfds[i].revents & POLLIN)
 			{
@@ -61,19 +65,9 @@ void	ServerManager::start_servers(void)
 					{
 						write(0, buf, nbytes);
 					}
-					//servers[0].reponse.makeReponse(servers[0].request, servers[0].locations);
-					//clientInfo client = getClientByFd(pfds[i].fd);
-					//client.server.handleRequest(client.fd);
-					//find wich server is related to this client.
-					//read the request.
-					//when done reading, switch client_poll_fd to POLLOUT.
-					//send the response.
-					//switch back to POLLIN.
 				}
 			}
-		}
-	}
-}
+		}*/
 
 /* private: */
 
@@ -127,10 +121,18 @@ clientInfo	ServerManager::getClientByFd(int fd)
 	return (client);
 }
 
-void	ServerManager::handleNewConnexion(int fd)
+void	ServerManager::checkServerSocket()
+{
+	for (size_t i = 0; i < servers.size(); i++)
+	{
+		if (pfds[i].revents & POLLIN)
+			handleNewConnexion(i);
+	}
+}
+
+void	ServerManager::handleNewConnexion(int index)
 {
 	clientInfo	client;
-	int			index = get_index_server(fd);
 
 	client.server = servers[index];
 	if ((client.fd = accept(servers[index].sd, (struct sockaddr *)&client.addr, &client.addr_size)) < 0)
@@ -142,6 +144,32 @@ void	ServerManager::handleNewConnexion(int fd)
 	}
 	add_to_pfds(client.fd);
 	clients.push_back(client);
+}
+
+void	ServerManager::checkClientSocket()
+{
+	char					buf[1000];
+
+	for (size_t i = servers.size(); i < pfds.size(); i++)
+	{
+		if (pfds[i].revents & POLLIN)
+		{
+			int nbytes = recv(pfds[i].fd, buf, sizeof buf, 0);
+			if (nbytes <= 0)
+			{
+				if (nbytes == 0)
+					printf("pollserver: socket %d hung up\n", pfds[i].fd);
+				else
+					perror("recv");
+				close(pfds[i].fd);
+				del_from_pfds(i);
+			}
+			else  // We got some good data from a client
+			{
+				write(0, buf, nbytes);
+			}
+		}
+	}
 }
 
 int 	ServerManager::create_server_socket(Server &server) // Return a listening socket

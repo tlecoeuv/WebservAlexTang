@@ -51,7 +51,9 @@ private:
 	int			is_server_socket(int fd);
 	int			get_index_server(int fd);
 	clientInfo	getClientByFd(int fd);
-	void		handleNewConnexion(int fd);
+	void		checkServerSocket();
+	void		checkClientSocket();
+	void		handleNewConnexion(int index);
 	int 		create_server_socket(Server &server);
 };
 
