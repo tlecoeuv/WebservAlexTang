@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unistd.h>
+#include <signal.h>
 
 #include "../includes/Config.hpp"
 #include "../includes/Server.hpp"
