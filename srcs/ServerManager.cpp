@@ -18,11 +18,7 @@ void	ServerManager::add_server(Server &server)
 	newpfd.fd = create_server_socket(server);
 	newpfd.events = POLLIN;
 	pfds.push_back(newpfd);
-	server.pfd = &pfds[pfds.size() - 1];
 	servers.push_back(server);
-	std::cout << "pfds[0].fd: " << pfds[0].fd << std::endl;
-	std::cout << "servers[0].fd " << servers[0].sd << std::endl;
-	std::cout << "server[0].pfd->fd : " << servers[0].pfd->fd << std::endl;
 }
 
 void	ServerManager::start_servers(void)
@@ -40,7 +36,6 @@ void	ServerManager::start_servers(void)
             perror("poll");
             exit(1);
         }
-		std::cout << servers[0].pfd->fd << std::endl;
 		for(size_t i = 0; i < pfds.size(); i++)
 		{
 			if (pfds[i].revents & POLLIN)
@@ -137,7 +132,6 @@ void	ServerManager::handleNewConnexion(int fd)
 	clientInfo	client;
 	int			index = get_index_server(fd);
 
-	std::cout << servers[index].sd << std::endl;
 	client.server = servers[index];
 	if ((client.fd = accept(servers[index].sd, (struct sockaddr *)&client.addr, &client.addr_size)) < 0)
 		perror("accept");
