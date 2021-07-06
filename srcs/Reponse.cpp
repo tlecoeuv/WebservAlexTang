@@ -10,11 +10,7 @@ void Reponse::makeReponse(Request request, std::map<std::string, Location> locat
 	std::map<std::string, std::string> info;
 
 	info["Content-Type"] = "text/html";
-	std::string ContentType = "Content-Type: text/plain\n";
-	std::string ContentLength = "Content-Length: 12\n\n";
 	header += "HTTP/1.1 200 OK\n";
-	header += ContentType;
-	header += ContentLength;
 	info["path"] = locations["/"].root;
 	//info["path"] += locations["/"].index;
 	info["path"] += "/index.html";
@@ -27,8 +23,12 @@ void Reponse::get(std::map<std::string, std::string> info, Request request){
 	(void)request;
 
 	info["Content-Type"] = _getMIMEType(info["path"]);
-	std::cerr << "Content-Type " << info["Content-Type"] << std::endl;
 	std::string body = readFile(info["path"]);
+	header += "Content-Type: ";
+	header += info["Content-Type"];
+	header += "\nContent-Length: ";
+	header += std::to_string(body.size());
+	header += "\n\n";
 	header += body;
 }
 
@@ -43,7 +43,8 @@ std::string Reponse::_getMIMEType(std::string filename)
 		--i;
 	if (i == 0)
 		return ("text/plain");
-	extension = filename.substr(i, filename.size());
+	extension = filename.substr(i + 1, filename.size());
+	std::cerr << "extension " << extension << std::endl;
 	MIME["aac"] = "audio/aac";
 	MIME["abw"] = "application/x-abiword";
 	MIME["arc"] = "application/octet-stream";
