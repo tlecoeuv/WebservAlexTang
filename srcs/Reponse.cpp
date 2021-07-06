@@ -10,11 +10,6 @@ void Reponse::makeReponse(Request request, std::map<std::string, Location> locat
 	std::map<std::string, std::string> info;
 
 	info["Content-Type"] = "text/html";
-<<<<<<< HEAD
-=======
-	std::string ContentType = "Content-Type: text/plain\n";
-	std::string ContentLength = "Content-Length: 30\n\n";
->>>>>>> 40a48e755d3857cb4809915e9e6b0739d7b72817
 	header += "HTTP/1.1 200 OK\n";
 	info["path"] = locations["/"].root;
 	//info["path"] += locations["/"].index;
