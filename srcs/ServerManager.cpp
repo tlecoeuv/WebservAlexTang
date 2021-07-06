@@ -156,6 +156,11 @@ void	ServerManager::checkClientSocket()
 		{
 			client = getClientByFd(pfds[i].fd);
 			client.readRequest();
+			std::cout << "servers.size()" << std::endl;
+			std::cout << servers.size() << std::endl;
+			std::cout << "pfds.size()" << std::endl;
+			std::cout << pfds.size() << std::endl;
+			Reponse reponse(servers.at(0).request, servers.at(0).locations);
 			if (client.endConnexion)
 			{
 				close(pfds[i].fd);

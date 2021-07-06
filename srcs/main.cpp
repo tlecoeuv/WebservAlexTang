@@ -32,6 +32,7 @@ int main(int argc, char **argv)
     }
     catch(std::exception& ex) {
 		error(ex);
+		exit(0);
 	}
 	manager.start_servers();
 }

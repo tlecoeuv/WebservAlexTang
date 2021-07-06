@@ -135,7 +135,7 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
             throw std::out_of_range("Wrong Location");
         }
     }
-    newServer.locations["test"] = newLocation;
+    newServer.locations[path] = newLocation;
     return index;
 }
 

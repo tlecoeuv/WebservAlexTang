@@ -15,6 +15,7 @@ class 	Reponse {
 
     public:
         Reponse(){};
+        Reponse(Request request, std::map<std::string, Location> locations);
 		void makeReponse(Request request, std::map<std::string, Location> locations);
         void get(std::map<std::string, std::string> info, Request request);
         std::string _getMIMEType(std::string filename);

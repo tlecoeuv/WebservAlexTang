@@ -1,5 +1,11 @@
 #include "../includes/Reponse.hpp"
 
+Reponse::Reponse(Request request, std::map<std::string, Location> locations){
+	makeReponse(request, locations);
+}
+
+
+//if index == getindex => chercher index
 void Reponse::makeReponse(Request request, std::map<std::string, Location> locations){
 	std::map<std::string, std::string> info;
 
@@ -12,6 +18,8 @@ void Reponse::makeReponse(Request request, std::map<std::string, Location> locat
 	header += ContentLength;
 	header += body;
 	info["path"] = locations["/"].root;
+	//info["path"] += locations["/"].index;
+	info["path"] += "/index.html";
 	request.method = "GET";
 	if (request.method == "GET")
 		Reponse::get(info, request);
@@ -20,8 +28,9 @@ void Reponse::makeReponse(Request request, std::map<std::string, Location> locat
 void Reponse::get(std::map<std::string, std::string> info, Request request){
 	(void)request;
 
-	//info["Content-Type"] = _getMIMEType(info["path"]);
-	info["Content-Type"] = _getMIMEType("ok.jpg");
+	info["Content-Type"] = _getMIMEType(info["path"]);
+	std::cerr << "Content-Type " << info["Content-Type"] << std::endl;
+	//info["Content-Type"] = _getMIMEType("ok.jpg");
 }
 
 std::string Reponse::_getMIMEType(std::string filename)

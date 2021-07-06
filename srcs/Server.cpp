@@ -34,7 +34,6 @@ void	Server::handleRequest(int client_fd)
 	char* buf[1000];
 	// std::cout << "new connection on fd: " << client_fd << std::endl;
 	// getRequest(client_fd);
-	// reponse.makeReponse(request);
 	// write(client_fd , reponse.header.c_str() , reponse.header.size());
 	// std::cout << "client request:\n________________________\n" << std::endl;
 	// std::cout << request.method << std::endl;
