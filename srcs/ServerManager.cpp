@@ -110,10 +110,10 @@ int		ServerManager::is_server_socket(int fd)
 	return (0);
 }
 
-clientInfo	ServerManager::getClientByFd(int fd)
+Client	ServerManager::getClientByFd(int fd)
 {
-	clientInfo	client;
-	for (std::list<clientInfo>::iterator it = clients.begin(); it != clients.end(); it++)
+	Client	client;
+	for (std::list<Client>::iterator it = clients.begin(); it != clients.end(); it++)
 	{
 		if ((*it).fd == fd)
 			client = (*it);
@@ -132,7 +132,7 @@ void	ServerManager::checkServerSocket()
 
 void	ServerManager::handleNewConnexion(int index)
 {
-	clientInfo	client;
+	Client	client;
 
 	client.server = servers[index];
 	if ((client.fd = accept(servers[index].sd, (struct sockaddr *)&client.addr, &client.addr_size)) < 0)
@@ -148,13 +148,25 @@ void	ServerManager::handleNewConnexion(int index)
 
 void	ServerManager::checkClientSocket()
 {
-	char					buf[1000];
+	Client					client;
 
 	for (size_t i = servers.size(); i < pfds.size(); i++)
 	{
 		if (pfds[i].revents & POLLIN)
 		{
-			int nbytes = recv(pfds[i].fd, buf, sizeof buf, 0);
+			client = getClientByFd(pfds[i].fd);
+			client.readRequest();
+			if (client.endConnexion)
+			{
+				close(pfds[i].fd);
+				del_from_pfds(i);
+				//removeClient(client);
+			}
+		}
+	}
+}
+
+			/*int nbytes = recv(pfds[i].fd, buf, sizeof buf, 0);
 			if (nbytes <= 0)
 			{
 				if (nbytes == 0)
@@ -167,10 +179,7 @@ void	ServerManager::checkClientSocket()
 			else  // We got some good data from a client
 			{
 				write(0, buf, nbytes);
-			}
-		}
-	}
-}
+			}*/
 
 int 	ServerManager::create_server_socket(Server &server) // Return a listening socket
 {

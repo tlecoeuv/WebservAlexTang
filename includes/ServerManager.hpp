@@ -5,6 +5,7 @@
 #include "Location.hpp"
 #include "Request.hpp"
 #include "Reponse.hpp"
+#include "Client.hpp"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,14 +22,6 @@
 #include <iostream>
 #include <list>
 
-struct		clientInfo
-{
-	int						fd;
-	socklen_t				addr_size;
-	struct sockaddr_storage	addr;
-	Server					server;
-};
-
 
 class 	ServerManager
 {
@@ -44,13 +37,13 @@ private:
 
 	std::vector<Server>			servers;
 	std::vector<pollfd> 		pfds;
-	std::list<clientInfo>		clients;
+	std::list<Client>			clients;
 
 	void		add_to_pfds(int newfd);
 	void		del_from_pfds(int i);
 	int			is_server_socket(int fd);
 	int			get_index_server(int fd);
-	clientInfo	getClientByFd(int fd);
+	Client		getClientByFd(int fd);
 	void		checkServerSocket();
 	void		checkClientSocket();
 	void		handleNewConnexion(int index);
