@@ -12,11 +12,9 @@ void Reponse::makeReponse(Request request, std::map<std::string, Location> locat
 	info["Content-Type"] = "text/html";
 	std::string ContentType = "Content-Type: text/plain\n";
 	std::string ContentLength = "Content-Length: 12\n\n";
-	std::string body = "Hello world!";
 	header += "HTTP/1.1 200 OK\n";
 	header += ContentType;
 	header += ContentLength;
-	header += body;
 	info["path"] = locations["/"].root;
 	//info["path"] += locations["/"].index;
 	info["path"] += "/index.html";
@@ -30,7 +28,8 @@ void Reponse::get(std::map<std::string, std::string> info, Request request){
 
 	info["Content-Type"] = _getMIMEType(info["path"]);
 	std::cerr << "Content-Type " << info["Content-Type"] << std::endl;
-	//info["Content-Type"] = _getMIMEType("ok.jpg");
+	std::string body = readFile(info["path"]);
+	header += body;
 }
 
 std::string Reponse::_getMIMEType(std::string filename)
@@ -115,4 +114,21 @@ std::string Reponse::_getMIMEType(std::string filename)
 	if (MIME.count(extension))
 		return (MIME[extension]);
 	return ("application/octet-stream");
+}
+
+std::string Reponse::readFile(std::string file)
+{
+	char buffer[256 + 1] = {0};
+	int fd;
+	int res;
+	std::string result;
+
+	if((fd = open(file.c_str(), O_RDONLY)) < -1)
+		throw std::out_of_range("The file does not exists.");
+	while ((res = read(fd, buffer, 256)) > 0)
+		for (size_t j = 0; j < (size_t)res; ++j)
+			result += buffer[j];
+	if (res < 0)
+		throw std::out_of_range("Error while reading.");
+	return (result);
 }

@@ -21,7 +21,8 @@ public:
 	struct sockaddr_storage	addr;
 	Server					server;
     bool                    endConnexion;
-
+    Request                 request;
+    
     void                    readRequest();
 
 private:

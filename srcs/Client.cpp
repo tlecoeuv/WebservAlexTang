@@ -25,7 +25,10 @@ void    Client::readRequest()
     else  // We got some good data from a client
 	{
         //parseBuffer(nbytes);
-		write(0, buf, nbytes);
+		Reponse reponse(server.request, server.locations);
+		std::cout << reponse.header.c_str() << std::endl;
+		std::cout << strlen(reponse.header.c_str()) << std::endl;
+		write(fd, reponse.header.c_str(), reponse.header.size());
 	}
 
 }
