@@ -11,7 +11,7 @@ void Reponse::makeReponse(Request request, std::map<std::string, Location> locat
 
 	info["Content-Type"] = "text/html";
 	std::string ContentType = "Content-Type: text/plain\n";
-	std::string ContentLength = "Content-Length: 12\n\n";
+	std::string ContentLength = "Content-Length: 30\n\n";
 	header += "HTTP/1.1 200 OK\n";
 	header += ContentType;
 	header += ContentLength;
