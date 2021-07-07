@@ -156,6 +156,9 @@ void	ServerManager::checkClientSocket()
 		{
 			client = getClientByFd(pfds[i].fd);
 			client.readRequest();
+			Reponse reponse(client.request, client.server.locations);
+			int size = reponse.header.size();
+			client.sendall(pfds[i].fd, reponse.header.c_str(), &size);
 			if (client.endConnexion)
 			{
 				close(pfds[i].fd);

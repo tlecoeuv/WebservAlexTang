@@ -25,6 +25,7 @@ public:
     Request                 request;
     
     void                    readRequest();
+    int                     sendall(int s, const char *buf, int *len);
 
 private:
     char                    buf[4096];

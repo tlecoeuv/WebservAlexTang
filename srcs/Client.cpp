@@ -9,7 +9,7 @@ Client::~Client()
 {
 }
 
-int sendall(int s, const char *buf, int *len)
+int Client::sendall(int s, const char *buf, int *len)
 {
     int total = 0;        // how many bytes we've sent
     int bytesleft = *len; // how many we have left to send

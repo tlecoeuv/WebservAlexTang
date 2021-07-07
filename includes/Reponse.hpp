@@ -23,8 +23,11 @@ class 	Reponse {
         Reponse(){};
         Reponse(Request request, std::map<std::string, Location> locations);
 		void makeReponse(Request request, std::map<std::string, Location> locations);
-        void get(std::map<std::string, std::string> info, Request request);
-        std::string _getMIMEType(std::string filename);
+        void methodGet(std::map<std::string, std::string> info, Request request);
+        void methodDelete(std::map<std::string, std::string> info, Request request);
+        void methodError(std::map<std::string, std::string> info, Request request, int code);
+        std::string getMIMEType(std::string filename);
+        std::string getMessage(size_t code);
         std::string readFile(std::string file);
 };
 
