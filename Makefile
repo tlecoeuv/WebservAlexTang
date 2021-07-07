@@ -13,9 +13,9 @@ _WHITE		=\e[97m
 NAME = webserv
 
 SRC = main.cpp \
-		config.cpp \
+		Config.cpp \
 		ServerManager.cpp \
-		request.cpp \
+		Request.cpp \
 		utils.cpp \
 		Server.cpp \
 		Reponse.cpp \

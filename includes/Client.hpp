@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <unistd.h>
+#include <string>
 
 class Client
 {
@@ -26,9 +27,10 @@ public:
     void                    readRequest();
 
 private:
-    char                    *buf[4096];
+    char                    buf[4096];
+    std::string             requestString;
 
-  //  void                    parseBuffer(int nbytes);
+    void                    parseRequestString();
 };
 
 

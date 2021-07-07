@@ -29,30 +29,30 @@ int sendall(int s, const char *buf, int *len)
 
 void    Client::readRequest()
 {
-    int     nbytes;
+    bool     first_recv = true;
+    int     nbytes = 4096;
 
-    nbytes = recv(fd, buf, 4096, 0);
-    if (nbytes <= 0)
-	{
-		if (nbytes == 0)
-			printf("Client on fd %d has closed connexion\n", fd);
-		else
-			perror("recv");
-		endConnexion = true;
-	}
-    else  // We got some good data from a client
-	{
-        //parseBuffer(nbytes);
-		Reponse reponse(server.request, server.locations);
-		std::cout << reponse.header.c_str() << std::endl;
-		std::cout << strlen(reponse.header.c_str()) << std::endl;
-		//write(fd, reponse.header.c_str(), reponse.header.size());
-		int size = reponse.header.size();
-		sendall(fd, reponse.header.c_str(), &size);
-	}
+    while (nbytes == 4096)
+    {
+        nbytes = recv(fd, buf, 4096, 0);
+        if (first_recv && nbytes == 0)
+        {
+            endConnexion = true;
+            printf("Client on fd %d has closed connexion\n", fd);
+        }
+        if (nbytes < 0)
+        {
+            perror("recv");
+            endConnexion = true;
+        }
+        first_recv = false;
+        requestString += buf;
+    }
+    if (!endConnexion)
+        parseRequestString();
 }
 
-// void    Client::parseBuffer(int nbytes)
-// {
-
-// }
+void    Client::parseRequestString()
+{
+    std::cout << requestString << std::endl;
+}

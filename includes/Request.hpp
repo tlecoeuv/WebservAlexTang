@@ -10,6 +10,7 @@ std::vector<std::string> fileToVector(std::string file, int conf);
 class 	Request {
     public:
         std::string method;
+        std::string uri;
         std::string host;
         std::string connection;
         std::string cacheControl;
