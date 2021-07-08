@@ -18,7 +18,9 @@ void Reponse::makeReponse(Request request, std::map<std::string, Location> locat
 	if (request.method == "GET")
 		Reponse::methodGet(info, request);
 	else if (request.method == "DELETE")
-		Reponse::methodDelete(info, request);
+		Reponse::methodDelete(info);
+	else
+		methodError(info, 405);
 }
 
 void Reponse::methodGet(std::map<std::string, std::string> info, Request request){
@@ -30,8 +32,7 @@ void Reponse::methodGet(std::map<std::string, std::string> info, Request request
 		body = readFile(info["path"]);
 	}
 	catch (const std::exception &e){
-		std::cerr << "-------------JE SUIS LA------------" << std::endl;
-		methodError(info, request, 403);
+		methodError(info, 403);
 	}
 	header += "Content-Type: ";
 	header += info["Content-Type"];
@@ -41,19 +42,42 @@ void Reponse::methodGet(std::map<std::string, std::string> info, Request request
 	header += body;
 }
 
-void Reponse::methodDelete(std::map<std::string, std::string> info, Request request){
+void Reponse::methodDelete(std::map<std::string, std::string> info){
 	struct stat buf;
-	(void)request;
+
 	if ((stat(info["path"].c_str(), &buf)) == 0 && S_ISREG(buf.st_mode))
 		unlink(info["path"].c_str());
 	else
-		throw std::out_of_range("Error delete: wrong file.");
+		methodError(info, 404);;
 }
 
-void Reponse::methodError(std::map<std::string, std::string> info, Request request, int code){
-	(void)info;
-	(void)request;
+std::string Reponse::bodyError(std::string oldBody, int code){
+	size_t start_pos = 0;
+	std::string value = "$1";
+	std::string tmp = std::to_string(code);
+	while((start_pos = oldBody.find(value, start_pos)) != std::string::npos) {
+		oldBody.replace(start_pos, value.length(), tmp);
+		start_pos += tmp.length();
+	}
+	start_pos = 0;
+	value = "$2";
+	tmp = getMessage(code);
+	while((start_pos = oldBody.find(value, start_pos)) != std::string::npos) {
+		oldBody.replace(start_pos, value.length(), tmp);
+		start_pos += tmp.length();
+	}
+	return (oldBody);
+}
+
+void Reponse::methodError(std::map<std::string, std::string> info, int code){
 	header = "HTTP/1.1 " + std::to_string(code) + " " + getMessage(code);
+	header += "Content-Type: ";
+	header += info["Content-Type"];
+	header += "\nContent-Length: ";
+	std::string body = bodyError(readFile("./www/error.html"), code);
+	header += std::to_string(body.size());
+	header += "\n\n";
+	header += body;
 }
 
 std::string Reponse::getMIMEType(std::string filename)
