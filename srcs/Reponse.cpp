@@ -8,7 +8,7 @@ void Reponse::makeReponse(Request request, std::map<std::string, Location> locat
 	std::map<std::string, std::string> info;
 
 	info["Content-Type"] = "text/html";
-	header += "HTTP/1.1 200 OK\n";
+	header = "HTTP/1.1 200 OK\n";
 	info["path"] = locations["/"].root;
 	//info["path"] += locations["/"].index;
 	info["path"] += "/index.html";
@@ -43,9 +43,30 @@ void Reponse::methodGet(std::map<std::string, std::string> info, Request request
 }
 
 void Reponse::methodPOST(std::map<std::string, std::string> info, Request request){
-	std::string body; 
+	std::string body;
+	struct stat buf;
+
 	(void)request;
-	info["Content-Type"] = getMIMEType(info["path"]);
+	if ((stat(info["path"].c_str(), &buf)) == 0){
+		if (S_ISREG(buf.st_mode)){
+			int fd = open(info["path"].c_str(), O_WRONLY | O_TRUNC, 0644);
+			body = readFile(info["path"]);
+			write(fd, body.c_str(), body.size());
+			close(fd);
+			header = "HTTP/1.1 200 OK\n";
+		}
+		else {
+			int fd = open(info["path"].c_str(), O_WRONLY | O_APPEND | O_CREAT, 0644);
+			body = readFile(info["path"]);
+			write(fd, body.c_str(), body.size());
+			close(fd);
+			header = "HTTP/1.1 201 Created\n";
+		}
+		header += "Content-Type: ";
+		header += info["Content-Type"];
+	}
+	else
+		methodError(info, 500);
 }
 
 void Reponse::methodDelete(std::map<std::string, std::string> info){
@@ -63,7 +84,7 @@ void Reponse::methodDelete(std::map<std::string, std::string> info){
 		header += body;
 	}
 	else
-		methodError(info, 404);;
+		methodError(info, 404);
 }
 
 std::string Reponse::bodyError(std::string oldBody, int code){

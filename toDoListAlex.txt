@@ -1,0 +1,22 @@
+                    TO DO LIST:
+
+|V|Ajouter page erreur html.
+	| | - enlever la variable en dur de l'addresse de la page erreur.html et mettre la variable du fichier .conf
+
+|V|Implémenter delete:
+	| | - améliorer la réponse html
+
+| |Implémenter post:
+	| | - améliorer la réponse html
+
+| |Enlever les variables "en dur"
+	| | - gérer le "getIndex" du fichier conf
+	| | - gérer plusieurs méthod dans une même location.
+
+| |Implémenter les CGI
+	| | - "cgi .bla" != cgiPath ?
+
+|V|Travailler un petit peu plus.
+
+
+Questions: Faut il gérer la variable maxBody du fichier conf ? Si oui comment: afficher jusqu'a la taille max ou indiquer une erreur si la taille est superieure ?
