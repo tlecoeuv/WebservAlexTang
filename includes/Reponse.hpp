@@ -24,6 +24,7 @@ class 	Reponse {
         Reponse(Request request, std::map<std::string, Location> locations);
 		void makeReponse(Request request, std::map<std::string, Location> locations);
         void methodGet(std::map<std::string, std::string> info, Request request);
+		void methodPOST(std::map<std::string, std::string> info, Request request);
         void methodDelete(std::map<std::string, std::string> info);
         void methodError(std::map<std::string, std::string> info, int code);
 		std::string bodyError(std::string oldBody, int code);

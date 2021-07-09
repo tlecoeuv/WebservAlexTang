@@ -4,8 +4,6 @@ Reponse::Reponse(Request request, std::map<std::string, Location> locations){
 	makeReponse(request, locations);
 }
 
-
-//if index == getindex => chercher index
 void Reponse::makeReponse(Request request, std::map<std::string, Location> locations){
 	std::map<std::string, std::string> info;
 
@@ -19,6 +17,8 @@ void Reponse::makeReponse(Request request, std::map<std::string, Location> locat
 		Reponse::methodGet(info, request);
 	else if (request.method == "DELETE")
 		Reponse::methodDelete(info);
+	else if (request.method == "POST")
+		Reponse::methodPOST(info, request);
 	else
 		methodError(info, 405);
 }
@@ -42,11 +42,26 @@ void Reponse::methodGet(std::map<std::string, std::string> info, Request request
 	header += body;
 }
 
+void Reponse::methodPOST(std::map<std::string, std::string> info, Request request){
+	std::string body; 
+	(void)request;
+	info["Content-Type"] = getMIMEType(info["path"]);
+}
+
 void Reponse::methodDelete(std::map<std::string, std::string> info){
 	struct stat buf;
 
-	if ((stat(info["path"].c_str(), &buf)) == 0 && S_ISREG(buf.st_mode))
+	if ((stat(info["path"].c_str(), &buf)) == 0 && S_ISREG(buf.st_mode)){
 		unlink(info["path"].c_str());
+		std::string body = "<html>\n<body>\n<h1>File deleted.</h1>\n</body>\n</html>";
+		info["Content-Type"] = getMIMEType(info["path"]);
+		header += "Content-Type: ";
+		header += info["Content-Type"];
+		header += "\nContent-Length: ";
+		header += std::to_string(body.size());
+		header += "\n\n";
+		header += body;
+	}
 	else
 		methodError(info, 404);;
 }
