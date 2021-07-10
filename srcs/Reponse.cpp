@@ -9,9 +9,8 @@ void Reponse::makeReponse(Request request, std::map<std::string, Location> locat
 
 	info["Content-Type"] = "text/html";
 	header = "HTTP/1.1 200 OK\n";
-	info["path"] = locations["/"].root;
-	//info["path"] += locations["/"].index;
-	info["path"] += "/index.html";
+	info["path"] = locations["/"].root + "/";
+	info["path"] += locations["/"].index;
 	request.method = "GET";
 	if (request.method == "GET")
 		Reponse::methodGet(info, request);
@@ -47,47 +46,48 @@ void Reponse::methodPOST(std::map<std::string, std::string> info, Request reques
 	struct stat buf;
 
 	(void)request;
+	//if (body.size() > atoi(location.max_body.c_str()))
+		//	methodError(info, 413);
 	if ((stat(info["path"].c_str(), &buf)) == 0){
 		if (S_ISREG(buf.st_mode)){
 			int fd = open(info["path"].c_str(), O_WRONLY | O_TRUNC, 0644);
-			body = readFile(info["path"]);
+			body = "Salut les gens";
 			write(fd, body.c_str(), body.size());
 			close(fd);
-			header = "HTTP/1.1 200 OK\n";
+			header += "Content-Type: ";
+			header += info["Content-Type"];
+			header += "\nContent-Length: 0\n\n";
 		}
-		else {
-			int fd = open(info["path"].c_str(), O_WRONLY | O_APPEND | O_CREAT, 0644);
-			body = readFile(info["path"]);
-			write(fd, body.c_str(), body.size());
-			close(fd);
-			header = "HTTP/1.1 201 Created\n";
-		}
+		else 
+			methodError(info, 500);
+	}
+	else {
+		int fd = open(info["path"].c_str(), O_WRONLY | O_APPEND | O_CREAT, 0644);
+		body = "Bonjour tout le monde";
+		write(fd, body.c_str(), body.size());
+		close(fd);
+		header = "HTTP/1.1 201 Created\n";
 		header += "Content-Type: ";
 		header += info["Content-Type"];
+		header += "\nContent-Length: 0\n\n";
 	}
-	else
-		methodError(info, 500);
 }
 
-void Reponse::methodDelete(std::map<std::string, std::string> info){
+void Reponse::methodDelete(std::map<std::string, std::string> info) {
 	struct stat buf;
 
-	if ((stat(info["path"].c_str(), &buf)) == 0 && S_ISREG(buf.st_mode)){
+	if ((stat(info["path"].c_str(), &buf)) == 0 && S_ISREG(buf.st_mode)) {
 		unlink(info["path"].c_str());
-		std::string body = "<html>\n<body>\n<h1>File deleted.</h1>\n</body>\n</html>";
 		info["Content-Type"] = getMIMEType(info["path"]);
 		header += "Content-Type: ";
 		header += info["Content-Type"];
-		header += "\nContent-Length: ";
-		header += std::to_string(body.size());
-		header += "\n\n";
-		header += body;
+		header += "\nContent-Length: 0\n\n";
 	}
 	else
 		methodError(info, 404);
 }
 
-std::string Reponse::bodyError(std::string oldBody, int code){
+std::string Reponse::bodyError(std::string oldBody, int code) {
 	size_t start_pos = 0;
 	std::string value = "$1";
 	std::string tmp = std::to_string(code);
@@ -105,7 +105,7 @@ std::string Reponse::bodyError(std::string oldBody, int code){
 	return (oldBody);
 }
 
-void Reponse::methodError(std::map<std::string, std::string> info, int code){
+void Reponse::methodError(std::map<std::string, std::string> info, int code) {
 	header = "HTTP/1.1 " + std::to_string(code) + " " + getMessage(code);
 	header += "Content-Type: ";
 	header += info["Content-Type"];
@@ -116,8 +116,7 @@ void Reponse::methodError(std::map<std::string, std::string> info, int code){
 	header += body;
 }
 
-std::string Reponse::getMIMEType(std::string filename)
-{
+std::string Reponse::getMIMEType(std::string filename) {
 	std::map<std::string, std::string> MIME;
 	std::string extension;
 	size_t i;
@@ -200,8 +199,7 @@ std::string Reponse::getMIMEType(std::string filename)
 	return ("application/octet-stream");
 }
 
-std::string Reponse::getMessage(size_t code)
-{
+std::string Reponse::getMessage(size_t code) {
 	std::map<std::size_t, std::string> message;
 
 	message[100] = "Continue";
@@ -248,8 +246,7 @@ std::string Reponse::getMessage(size_t code)
 	return message[code];
 }
 
-std::string Reponse::readFile(std::string file)
-{
+std::string Reponse::readFile(std::string file) {
 	char buffer[256 + 1] = {0};
 	int fd;
 	int res;
