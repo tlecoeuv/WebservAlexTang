@@ -18,4 +18,4 @@
 
 |V|Travailler un petit peu plus.
 
-|V|Questions: Faut il gérer la variable maxBody du fichier conf ? Si oui comment: afficher jusqu'a la taille max ou indiquer une erreur si la taille est superieure ?
+|V|maxBody
