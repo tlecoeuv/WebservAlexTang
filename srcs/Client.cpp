@@ -1,5 +1,4 @@
 #include "../includes/Client.hpp"
-#include <bits/stdc++.h>
 
 Client::Client()
 {
@@ -60,6 +59,19 @@ void    Client::parseRequestString()
 
     std::getline(requestStream, line);
     parseFirstLine(line);
+
+    std::cout << "method: " << request.method << std::endl;
+    std::cout << "uri: " << request.uri << std::endl;
+    std::cout << "protocol: " << request.protocol << std::endl;
+
+    parseHeaders(requestStream);
+
+	std::cout << "method: " << request.method << std::endl;
+    std::cout << "uri: " << request.uri << std::endl;
+    std::cout << "protocol: " << request.protocol << std::endl;
+	std::map<std::string, std::string>::iterator it = request.headers.begin();
+	for (; it != request.headers.end(); it++)
+		std::cout << it->first << " -> " << it->second << std::endl; 
 }
 
 int    Client::parseFirstLine(std::string line)
@@ -74,10 +86,44 @@ int    Client::parseFirstLine(std::string line)
             words.push_back(word);
     }
     if (words.size() != 3)
-        return (1);
+        return (-1);
     request.method = words[0];
     request.uri = words[1];
     request.protocol = words[2];
+    return (0);
+}
+
+int		Client::parseHeaders(std::stringstream &requestStream)
+{
+	std::string		line;
+
+	while (std::getline(requestStream, line))
+	{
+		if (line.size() == 0)
+		{
+			request.body = requestStream.str();
+			break ;
+		}
+		parseHeaderLine(line);
+	}
+	return (0);
+}
+
+int		Client::parseHeaderLine(std::string line)
+{
+	std::string			name;
+	std::string			value;
+	std::stringstream	lineStream(line);
+
+	if (line.find(':') == std::string::npos)
+		return (-1);
+	std::getline(lineStream, name, ':');
+	std::getline(lineStream, value);
+	if (value[0] == ' ')
+		value.erase(0, 1);
+	
+	request.headers.insert(std::make_pair(name, value));
+	return (0);
 }
 
 /*Pseudo code:

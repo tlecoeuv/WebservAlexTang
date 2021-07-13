@@ -10,6 +10,7 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <string>
+#include <sstream>
 
 class Client
 {
@@ -33,6 +34,8 @@ private:
 
 	void                    parseRequestString();
 	int						parseFirstLine(std::string line);
+	int						parseHeaders(std::stringstream &requestStream);
+	int						parseHeaderLine(std::string line);
 };
 
 

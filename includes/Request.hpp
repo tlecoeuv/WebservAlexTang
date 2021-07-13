@@ -3,15 +3,19 @@
 
 #include <iostream>
 #include <vector>
+#include <map>
 #include <string>
 
 std::vector<std::string> fileToVector(std::string file, int conf);
 //https://maximilienandile.github.io/2016/09/30/Comprendre-les-headers-d-une-requete-HTTP/
 class 	Request {
     public:
-        std::string method;
-        std::string uri;
-        std::string proctol;
+        std::string                         method;
+        std::string                         uri;
+        std::string                         protocol;
+        std::map<std::string, std::string>  headers;
+        std::string                         body;
+
         std::string host;
         std::string connection;
         std::string cacheControl;
