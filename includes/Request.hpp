@@ -11,6 +11,7 @@ class 	Request {
     public:
         std::string method;
         std::string uri;
+        std::string proctol;
         std::string host;
         std::string connection;
         std::string cacheControl;

@@ -1,4 +1,5 @@
 #include "../includes/Client.hpp"
+#include <bits/stdc++.h>
 
 Client::Client()
 {
@@ -54,5 +55,37 @@ void    Client::readRequest()
 
 void    Client::parseRequestString()
 {
-    std::cout << requestString << std::endl;
+    std::stringstream   requestStream(requestString);
+    std::string         line;
+
+    std::getline(requestStream, line);
+    parseFirstLine(line);
 }
+
+int    Client::parseFirstLine(std::string line)
+{
+    std::vector<std::string>    words;
+    std::string                 word;
+    std::stringstream           lineStream(line);
+
+    while (std::getline(lineStream, word, ' '))
+    {
+        if (line.size() > 0)
+            words.push_back(word);
+    }
+    if (words.size() != 3)
+        return (1);
+    request.method = words[0];
+    request.uri = words[1];
+    request.protocol = words[2];
+}
+
+/*Pseudo code:
+
+parse request line,
+    split on space: if 3 word ok, else problem.
+
+    then split each line on : until empty line or EOF.
+    EOF: no body.
+    empty line: parse body
+*/

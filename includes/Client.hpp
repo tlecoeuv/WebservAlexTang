@@ -14,24 +14,25 @@
 class Client
 {
 public:
-    Client();
-    ~Client();
+	Client();
+	~Client();
 
-    int						fd;
-    socklen_t				addr_size;
+	int						fd;
+	socklen_t				addr_size;
 	struct sockaddr_storage	addr;
 	Server					server;
-    bool                    endConnexion;
-    Request                 request;
-    
-    void                    readRequest();
-    int                     sendall(int s, const char *buf, int *len);
+	bool                    endConnexion;
+	Request                 request;
+	
+	void                    readRequest();
+	int                     sendall(int s, const char *buf, int *len);
 
 private:
-    char                    buf[4096];
-    std::string             requestString;
+	char                    buf[4096];
+	std::string             requestString;
 
-    void                    parseRequestString();
+	void                    parseRequestString();
+	int						parseFirstLine(std::string line);
 };
 
 
