@@ -24,9 +24,10 @@ class 	Reponse {
         Reponse(Request request, std::map<std::string, Location> locations);
 		void makeReponse(Request request, std::map<std::string, Location> locations);
         void methodGet(std::map<std::string, std::string> info, Request request);
-		void methodPOST(std::map<std::string, std::string> info, Request request);
+		void methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body);
         void methodDelete(std::map<std::string, std::string> info);
         void methodError(std::map<std::string, std::string> info, int code);
+		int acceptedMethod(std::string requestMethod, std::vector<std::string> locationsMethod);
 		std::string bodyError(std::string oldBody, int code);
         std::string getMIMEType(std::string filename);
         std::string getMessage(size_t code);

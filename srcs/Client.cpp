@@ -68,7 +68,7 @@ void    Client::parseRequestString()
 
 	std::cout << "method: " << request.method << std::endl;
     std::cout << "uri: " << request.uri << std::endl;
-    std::cout << "protocol: " << request.protocol << std::endl;
+    std::cout << "protocol: " << request.protocol << std::endl << std::endl;
 	std::map<std::string, std::string>::iterator it = request.headers.begin();
 	for (; it != request.headers.end(); it++)
 		std::cout << it->first << " -> " << it->second << std::endl; 

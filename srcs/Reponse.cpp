@@ -9,17 +9,24 @@ void Reponse::makeReponse(Request request, std::map<std::string, Location> locat
 
 	info["Content-Type"] = "text/html";
 	header = "HTTP/1.1 200 OK\n";
-	info["path"] = locations["/"].root + "/";
-	info["path"] += locations["/"].index;
-	request.method = "GET";
+	info["path"] = locations[request.uri].root + "/";
+	info["path"] += locations[request.uri].index;
+	if (!acceptedMethod(request.method, locations[request.uri].method))
+		return methodError(info, 405);
 	if (request.method == "GET")
 		Reponse::methodGet(info, request);
 	else if (request.method == "DELETE")
 		Reponse::methodDelete(info);
 	else if (request.method == "POST")
-		Reponse::methodPOST(info, request);
-	else
-		methodError(info, 405);
+		Reponse::methodPOST(info, request, locations[request.uri].max_body);
+}
+
+int Reponse::acceptedMethod(std::string requestMethod, std::vector<std::string> locationsMethod){
+	for (std::vector<std::string>::iterator it = locationsMethod.begin() ; it != locationsMethod.end(); ++it){
+    	if (requestMethod == *it)
+			return 1;
+	}
+	return 0;
 }
 
 void Reponse::methodGet(std::map<std::string, std::string> info, Request request){
@@ -41,18 +48,15 @@ void Reponse::methodGet(std::map<std::string, std::string> info, Request request
 	header += body;
 }
 
-void Reponse::methodPOST(std::map<std::string, std::string> info, Request request){
-	std::string body;
+void Reponse::methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body){
 	struct stat buf;
 
-	(void)request;
-	//if (body.size() > atoi(location.max_body.c_str()))
-		//	methodError(info, 413);
+	if (max_body.size() && (int)request.body.size() > atoi(max_body.c_str()))
+		methodError(info, 413);
 	if ((stat(info["path"].c_str(), &buf)) == 0){
 		if (S_ISREG(buf.st_mode)){
 			int fd = open(info["path"].c_str(), O_WRONLY | O_TRUNC, 0644);
-			body = "Salut les gens";
-			write(fd, body.c_str(), body.size());
+			write(fd, request.body.c_str(), request.body.size());
 			close(fd);
 			header += "Content-Type: ";
 			header += info["Content-Type"];
@@ -63,8 +67,7 @@ void Reponse::methodPOST(std::map<std::string, std::string> info, Request reques
 	}
 	else {
 		int fd = open(info["path"].c_str(), O_WRONLY | O_APPEND | O_CREAT, 0644);
-		body = "Bonjour tout le monde";
-		write(fd, body.c_str(), body.size());
+		write(fd, request.body.c_str(), request.body.size());
 		close(fd);
 		header = "HTTP/1.1 201 Created\n";
 		header += "Content-Type: ";
