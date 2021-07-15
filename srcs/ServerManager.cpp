@@ -40,35 +40,6 @@ void	ServerManager::start_servers(void)
 	}
 }
 
-		/*for(size_t i = 0; i < pfds.size(); i++)
-		{
-			if (pfds[i].revents & POLLIN)
-			{
-				if (is_server_socket(pfds[i].fd))
-				{
-					handleNewConnexion(pfds[i].fd);
-					std::cout << "new connection handled" << std::endl;
-				}
-				else
-				{
-					int nbytes = recv(pfds[i].fd, buf, sizeof buf, 0);
-					if (nbytes <= 0)
-					{
-						if (nbytes == 0)
-							printf("pollserver: socket %d hung up\n", pfds[i].fd);
-						else
-							perror("recv");
-						close(pfds[i].fd);
-						del_from_pfds(i);
-					}
-					else  // We got some good data from a client
-					{
-						write(0, buf, nbytes);
-					}
-				}
-			}
-		}*/
-
 /* private: */
 
 void	ServerManager::add_to_pfds(int newfd)
@@ -163,26 +134,25 @@ void	ServerManager::checkClientSocket()
 			{
 				close(pfds[i].fd);
 				del_from_pfds(i);
-				//removeClient(client);
+				removeClient(client);
 			}
+			else
+				client.request.reset();
 		}
 	}
 }
 
-			/*int nbytes = recv(pfds[i].fd, buf, sizeof buf, 0);
-			if (nbytes <= 0)
-			{
-				if (nbytes == 0)
-					printf("pollserver: socket %d hung up\n", pfds[i].fd);
-				else
-					perror("recv");
-				close(pfds[i].fd);
-				del_from_pfds(i);
-			}
-			else  // We got some good data from a client
-			{
-				write(0, buf, nbytes);
-			}*/
+void	ServerManager::removeClient(Client &client)
+{
+	std::list<Client>::iterator		it = clients.begin();
+
+	for (; it != clients.end(); it ++)
+	{
+		if ((*it).fd == client.fd)
+			break ;
+	}
+	clients.erase(it);
+}
 
 int 	ServerManager::create_server_socket(Server &server) // Return a listening socket
 {

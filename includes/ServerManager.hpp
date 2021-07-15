@@ -48,6 +48,7 @@ private:
 	void		checkClientSocket();
 	void		handleNewConnexion(int index);
 	int 		create_server_socket(Server &server);
+	void		removeClient(Client &client);
 };
 
 #endif

@@ -34,3 +34,12 @@ void Request::fill(std::string buf){
             this->acceptLanguage = readHeader.at(i).substr(17);
     }
 }
+
+void    Request::reset()
+{
+    method.erase();
+    uri.erase();
+    protocol.erase();
+    headers.clear();
+    body.erase();
+}

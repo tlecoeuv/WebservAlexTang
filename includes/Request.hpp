@@ -32,6 +32,7 @@ class 	Request {
     public:
         Request();
         void fill(std::string buf);
+        void    reset();
 };
 
 #endif

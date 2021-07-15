@@ -1,9 +1,15 @@
                     TO DO LIST:
 
 | |Parsing requete.
+    | |gérer les erreus. -> bool badRequest?
+
+| |supprimer client quand celui ci ferme la connexion.
+
+| |remettre à zéro la requete entre chaque requete d'un meme client.
 
 | |Initialisation serveurs plus propre.
 
-| |Gestion d'erreur.
-
-|V|Travailler un petit peu plus.
+| |Gestion d'erreur
+    | |dans l'initialisation des serveurs.
+    | |dans la boucle poll.
+    | |dans le reading de la requete.
