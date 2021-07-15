@@ -67,7 +67,7 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 	}
 	else if (!readParam.at(index).compare(9, 1, "/")){
 		path = readParam.at(index).substr(9);
-		path.erase(path.end() - 1, path.end());
+		path.erase(path.end() - 2, path.end());
 	}
 	else 
 		throw std::out_of_range("No location path");

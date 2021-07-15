@@ -1,29 +1,35 @@
 #include "../includes/Reponse.hpp"
 
 Reponse::Reponse(Request request, std::map<std::string, Location> locations){
-	makeReponse(request, locations);
+	for (std::map<std::string, Location>::iterator it = locations.begin() ; it != locations.end(); ++it){
+		std::cout << request.uri << " " << it->first << std::endl;
+		if (request.uri == it->first){
+			makeReponse(request, it->second);
+			return ;
+		}
+	}
 }
 
-void Reponse::makeReponse(Request request, std::map<std::string, Location> locations){
+void Reponse::makeReponse(Request request, Location location){
 	std::map<std::string, std::string> info;
 
 	info["Content-Type"] = "text/html";
 	header = "HTTP/1.1 200 OK\n";
-	info["path"] = locations[request.uri].root + "/";
-	info["path"] += locations[request.uri].index;
-	if (!acceptedMethod(request.method, locations[request.uri].method))
+	info["path"] = location.root + "/";
+	info["path"] += location.index;
+	if (!acceptedMethod(request.method, location.method))
 		return methodError(info, 405);
 	if (request.method == "GET")
 		Reponse::methodGet(info, request);
 	else if (request.method == "DELETE")
 		Reponse::methodDelete(info);
 	else if (request.method == "POST")
-		Reponse::methodPOST(info, request, locations[request.uri].max_body);
+		Reponse::methodPOST(info, request, location.max_body);
 }
 
 int Reponse::acceptedMethod(std::string requestMethod, std::vector<std::string> locationsMethod){
-	for (std::vector<std::string>::iterator it = locationsMethod.begin() ; it != locationsMethod.end(); ++it){
-    	if (requestMethod == *it)
+	for (int i = 0 ; i < locationsMethod.size(); ++i){
+    	if (requestMethod == locationsMethod[i])
 			return 1;
 	}
 	return 0;
