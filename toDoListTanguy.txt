@@ -3,9 +3,9 @@
 | |Parsing requete.
     | |gérer les erreus. -> bool badRequest?
 
-| |supprimer client quand celui ci ferme la connexion.
+|V|supprimer client quand celui ci ferme la connexion.
 
-| |remettre à zéro la requete entre chaque requete d'un meme client.
+|V|remettre à zéro la requete entre chaque requete d'un meme client.
 
 | |Initialisation serveurs plus propre.
 

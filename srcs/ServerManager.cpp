@@ -21,6 +21,20 @@ void	ServerManager::add_server(Server &server)
 	servers.push_back(server);
 }
 
+void	ServerManager::addServers(std::vector<Server> configServers)
+{
+	servers = configServers;
+
+	for (size_t i = 0; i < servers.size(); i++)
+	{
+		struct pollfd	newpfd;
+
+		newpfd.fd = create_server_socket(servers.at(i));
+		newpfd.events = POLLIN;
+		pfds.push_back(newpfd);
+	}
+}
+
 void	ServerManager::start_servers(void)
 {
 	int 					poll_count;

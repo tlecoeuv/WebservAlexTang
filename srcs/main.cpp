@@ -21,15 +21,14 @@ void error(std::exception& ex)
 int main(int argc, char **argv)
 {
 	ServerManager	manager;
+
     if (argc != 2)
         exit(0);
     try {
 		signal(SIGINT, end);
-        Config server(argv[1]);
-		for (size_t i = 0 ; i < server.getServer().size() ; ++i){
-			manager.add_server(server.getServer().at(i));
-		}
-    }
+        Config config(argv[1]);
+		manager.addServers(config.getServer());
+	}
     catch(std::exception& ex) {
 		error(ex);
 		exit(0);

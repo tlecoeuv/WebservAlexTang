@@ -28,7 +28,7 @@ void Reponse::makeReponse(Request request, Location location){
 }
 
 int Reponse::acceptedMethod(std::string requestMethod, std::vector<std::string> locationsMethod){
-	for (int i = 0 ; i < locationsMethod.size(); ++i){
+	for (size_t i = 0 ; i < locationsMethod.size(); ++i){
     	if (requestMethod == locationsMethod[i])
 			return 1;
 	}

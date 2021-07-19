@@ -31,12 +31,13 @@ public:
 	~ServerManager(void);
 
 	void	add_server(Server &server);
+	void	addServers(std::vector<Server> configServers);
 	void	start_servers(void);
 
 private:
 
 	std::vector<Server>			servers;
-	std::vector<pollfd> 		pfds;
+	std::vector<pollfd>			pfds;
 	std::list<Client>			clients;
 
 	void		add_to_pfds(int newfd);
