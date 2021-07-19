@@ -57,6 +57,7 @@ void    Client::parseRequestString()
     std::stringstream   requestStream(requestString);
     std::string         line;
 
+    std::cout << requestString << std::endl;
     std::getline(requestStream, line);
     if (parseFirstLine(line) == -1)
     {
@@ -69,13 +70,7 @@ void    Client::parseRequestString()
     std::cout << "protocol: " << request.protocol << std::endl;
 
     parseHeaders(requestStream);
-
-	std::cout << "method: " << request.method << std::endl;
-    std::cout << "uri: " << request.uri << std::endl;
-    std::cout << "protocol: " << request.protocol << std::endl << std::endl;
-	std::map<std::string, std::string>::iterator it = request.headers.begin();
-	for (; it != request.headers.end(); it++)
-		std::cout << it->first << " -> " << it->second << std::endl; 
+    std::cout << "body: " << request.body << std::endl;
 }
 
 int    Client::parseFirstLine(std::string line)
@@ -105,12 +100,15 @@ int		Client::parseHeaders(std::stringstream &requestStream)
 
 	while (std::getline(requestStream, line))
 	{
-		if (line.size() == 0)
-		{
-			request.body = requestStream.str();
-			break ;
-		}
 		parseHeaderLine(line);
+        if (line.size() <= 1)
+        {
+            while (std::getline(requestStream, line))
+            {
+                request.body.append(line);
+                request.body.append("\n");
+            }
+        }
 	}
 	return (0);
 }
