@@ -1,7 +1,8 @@
 #include "../includes/Request.hpp"
 
 // Constructor request
-Request::Request(){}
+Request::Request() : badRequest(false)
+{}
 
 bool Request::cmd(std::string buf){
     if (buf.size() && !buf.compare(0, 4, "exit"))
@@ -42,4 +43,5 @@ void    Request::clear()
     protocol.erase();
     headers.clear();
     body.erase();
+    badRequest = false;
 }

@@ -58,7 +58,11 @@ void    Client::parseRequestString()
     std::string         line;
 
     std::getline(requestStream, line);
-    parseFirstLine(line);
+    if (parseFirstLine(line) == -1)
+    {
+        request.badRequest = true;
+        return ;
+    }
 
     std::cout << "method: " << request.method << std::endl;
     std::cout << "uri: " << request.uri << std::endl;
@@ -76,13 +80,15 @@ void    Client::parseRequestString()
 
 int    Client::parseFirstLine(std::string line)
 {
+    if (line.size() == 0)
+        return(-1);
     std::vector<std::string>    words;
     std::string                 word;
     std::stringstream           lineStream(line);
 
     while (std::getline(lineStream, word, ' '))
     {
-        if (line.size() > 0)
+        if (word.size() > 0)
             words.push_back(word);
     }
     if (words.size() != 3)

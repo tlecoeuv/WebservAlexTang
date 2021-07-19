@@ -111,11 +111,15 @@ void	ServerManager::handleNewConnexion(int index)
 
 	client.server = servers[index];
 	if ((client.fd = accept(servers[index].sd, (struct sockaddr *)&client.addr, &client.addr_size)) < 0)
-		perror("accept");
+	{
+		std::cout << "Error in accept fonction, client not created." << std::endl;
+		return ;
+	}
 	if ((fcntl(client.fd, F_SETFL, O_NONBLOCK)) == -1)
 	{
 		close(client.fd);
-		perror("fcntl");
+		std::cout << "Error in fcntl., client not created." << std::endl;
+		return ;
 	}
 	add_to_pfds(client.fd);
 	clients.push_back(client);
@@ -176,7 +180,7 @@ int 	ServerManager::create_server_socket(Server &server) // Return a listening s
 	if (bind(server.sd, (struct sockaddr *)&address, sizeof(address)) < 0)
 		throw std::runtime_error("Problem when binding server socket.");
 
-	if (listen(server.sd, 10) < 0)
+	if (listen(server.sd, 100) < 0)
 		throw std::runtime_error("Problem when calling listen on server socket.");
 
 	return (server.sd);

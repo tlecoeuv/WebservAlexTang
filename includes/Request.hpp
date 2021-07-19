@@ -15,6 +15,7 @@ class 	Request {
         std::string                         protocol;
         std::map<std::string, std::string>  headers;
         std::string                         body;
+        bool                                badRequest;
 
         std::string host;
         std::string connection;

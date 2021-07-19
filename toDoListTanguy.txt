@@ -2,6 +2,7 @@
 
 | |Parsing requete.
     | |gérer les erreus. -> bool badRequest?
+    | |taille max uri.
 
 |V|supprimer client quand celui ci ferme la connexion.
 
@@ -11,5 +12,9 @@
 
 | |Gestion d'erreur
     |V|dans l'initialisation des serveurs.
-    | |dans la boucle poll.
+    |V|dans la boucle poll.
     | |dans le reading de la requete.
+
+| |gerer le nombre max de clients par serveur.
+| |gerer le nombre max de requetes par client.
+| |temps max par client?
