@@ -7,9 +7,9 @@
 
 |V|remettre à zéro la requete entre chaque requete d'un meme client.
 
-| |Initialisation serveurs plus propre.
+|V|Initialisation serveurs plus propre.
 
 | |Gestion d'erreur
-    | |dans l'initialisation des serveurs.
+    |V|dans l'initialisation des serveurs.
     | |dans la boucle poll.
     | |dans le reading de la requete.

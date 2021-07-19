@@ -35,7 +35,7 @@ void Request::fill(std::string buf){
     }
 }
 
-void    Request::reset()
+void    Request::clear()
 {
     method.erase();
     uri.erase();

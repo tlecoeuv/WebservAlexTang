@@ -30,9 +30,8 @@ public:
 	ServerManager(void);
 	~ServerManager(void);
 
-	void	add_server(Server &server);
-	void	addServers(std::vector<Server> configServers);
-	void	start_servers(void);
+	void	initServers(std::vector<Server> configServers);
+	void	runServers(void);
 
 private:
 

@@ -27,11 +27,11 @@ int main(int argc, char **argv)
     try {
 		signal(SIGINT, end);
         Config config(argv[1]);
-		manager.addServers(config.getServer());
+		manager.initServers(config.getServer());
 	}
     catch(std::exception& ex) {
 		error(ex);
 		exit(0);
 	}
-	manager.start_servers();
+	manager.runServers();
 }

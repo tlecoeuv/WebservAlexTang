@@ -11,17 +11,7 @@ ServerManager::~ServerManager()
 
 /* public: */
 
-void	ServerManager::add_server(Server &server)
-{
-	struct pollfd	newpfd;
-
-	newpfd.fd = create_server_socket(server);
-	newpfd.events = POLLIN;
-	pfds.push_back(newpfd);
-	servers.push_back(server);
-}
-
-void	ServerManager::addServers(std::vector<Server> configServers)
+void	ServerManager::initServers(std::vector<Server> configServers)
 {
 	servers = configServers;
 
@@ -35,7 +25,7 @@ void	ServerManager::addServers(std::vector<Server> configServers)
 	}
 }
 
-void	ServerManager::start_servers(void)
+void	ServerManager::runServers(void)
 {
 	int 					poll_count;
 
@@ -151,7 +141,7 @@ void	ServerManager::checkClientSocket()
 				removeClient(client);
 			}
 			else
-				client.request.reset();
+				client.request.clear();
 		}
 	}
 }
@@ -174,10 +164,7 @@ int 	ServerManager::create_server_socket(Server &server) // Return a listening s
 	struct sockaddr_in address;
 
 	if ((server.sd = socket(AF_INET, SOCK_STREAM, 0)) == 0)
-	{
-		perror("In socket");
-		exit(EXIT_FAILURE);
-	}
+		throw std::runtime_error("Problem when creating server socket.");
 	fcntl(server.sd, F_SETFL, O_NONBLOCK);
 	setsockopt(server.sd, SOL_SOCKET, SO_REUSEADDR, &yes, sizeof(int));
 
@@ -187,16 +174,10 @@ int 	ServerManager::create_server_socket(Server &server) // Return a listening s
 	memset(address.sin_zero, '\0', sizeof(address.sin_zero));
 
 	if (bind(server.sd, (struct sockaddr *)&address, sizeof(address)) < 0)
-	{
-		perror("In bind");
-		exit(EXIT_FAILURE);
-	}
+		throw std::runtime_error("Problem when binding server socket.");
 
 	if (listen(server.sd, 10) < 0)
-    {
-        perror("In listen");
-        exit(EXIT_FAILURE);
-    }
+		throw std::runtime_error("Problem when calling listen on server socket.");
 
 	return (server.sd);
 }
