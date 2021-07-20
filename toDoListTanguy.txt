@@ -1,7 +1,7 @@
                     TO DO LIST:
 
 | |Parsing requete.
-    | |gérer les erreus. -> bool badRequest?
+    |V|gérer les erreus. -> bool badRequest?
     | |taille max uri.
 
 |V|supprimer client quand celui ci ferme la connexion.
@@ -13,8 +13,13 @@
 | |Gestion d'erreur
     |V|dans l'initialisation des serveurs.
     |V|dans la boucle poll.
-    | |dans le reading de la requete.
+    |V|dans le reading de la requete.
 
 | |gerer le nombre max de clients par serveur.
 | |gerer le nombre max de requetes par client.
 | |temps max par client?
+| |max body size. ---->pas crash lors d'enormes requetes.
+
+| |parsing complet uri?
+
+| |bien comprendre les CGI.

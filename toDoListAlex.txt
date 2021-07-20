@@ -19,3 +19,13 @@
 |V|Travailler un petit peu plus.
 
 |V|maxBody
+
+bugs signalé par tanguy <3:
+
+	| |pas de réponse quand direction inexistante:
+			ex: GET /poupi HTTP/1.1.
+
+	| |recherche d'un fichier précis ex: GET /index.html HTTP/1.1.
+		(index.html c'est pas le meilleur exemple parceque c'est celui par defaut,
+		mais on a que celui la, je sais pas exactement comment fonctionne
+		la recherche d'un fichier precis dans un serveur web)
