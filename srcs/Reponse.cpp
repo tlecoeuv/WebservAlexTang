@@ -2,12 +2,16 @@
 
 Reponse::Reponse(Request request, std::map<std::string, Location> locations){
 	for (std::map<std::string, Location>::iterator it = locations.begin() ; it != locations.end(); ++it){
-		std::cout << request.uri << " " << it->first << std::endl;
+		//std::cout << request.uri << " " << it->first << std::endl;
 		if (request.uri == it->first){
 			makeReponse(request, it->second);
 			return ;
 		}
 	}
+	std::map<std::string, std::string> info;
+
+	info["Content-Type"] = "text/html";
+	methodError(info, 403);
 }
 
 void Reponse::makeReponse(Request request, Location location){
@@ -59,6 +63,7 @@ void Reponse::methodPOST(std::map<std::string, std::string> info, Request reques
 
 	if (max_body.size() && (int)request.body.size() > atoi(max_body.c_str()))
 		methodError(info, 413);
+	std::cout << "request.body: " << request.body << std::endl;
 	if ((stat(info["path"].c_str(), &buf)) == 0){
 		if (S_ISREG(buf.st_mode)){
 			int fd = open(info["path"].c_str(), O_WRONLY | O_TRUNC, 0644);
