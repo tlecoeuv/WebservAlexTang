@@ -54,21 +54,35 @@ void    Client::readRequest()
 
 void    Client::parseRequestString()
 {
-	std::stringstream   requestStream(requestString);
 	std::string         line;
+	size_t				pos;
 
-	std::getline(requestStream, line);
+	pos = requestString.find("\r\n");
+	line = requestString.substr(0, pos);
+	requestString.erase(0, pos + 2);
 	if (parseFirstLine(line) == -1)
 	{
 		request.badRequest = true;
 		return ;
 	}
-
-	std::cout << "method: " << request.method << std::endl;
-	std::cout << "uri: " << request.uri << std::endl;
-	std::cout << "protocol: " << request.protocol << std::endl;
-
-	parseHeaders(requestStream);
+	while ((pos = requestString.find("\r\n")) != std::string::npos)
+	{
+		line = requestString.substr(0, pos);
+		requestString.erase(0, pos + 2);
+		if (line.size() > 0)
+		{
+			if (parseHeaderLine(line) == -1)
+			{
+				request.badRequest = true;
+				return ;
+			}
+		}
+		else
+		{
+			request.body = requestString;
+			break;
+		}
+	}
 }
 
 int    Client::parseFirstLine(std::string line)
@@ -87,33 +101,12 @@ int    Client::parseFirstLine(std::string line)
 	return (0);
 }
 
-int		Client::parseHeaders(std::stringstream &requestStream)
-{
-	std::string		line;
-
-	while (std::getline(requestStream, line))
-	{
-		parseHeaderLine(line);
-		if (line.size() <= 1)
-		{
-			while (std::getline(requestStream, line))
-			{
-				request.body.append(line);
-				request.body.append("\n");
-			}
-		}
-	}
-	return (0);
-}
-
 int		Client::parseHeaderLine(std::string line)
 {
-	std::vector<std::string>	words = split(line, ":");
+	std::vector<std::string>	words = split(line, ": ");
 	if (words.size() != 2)
 		return (-1);
 
-	if (words[1][0] == ' ')
-		words[1].erase(0, 1);
 	request.headers.insert(std::make_pair(words[0], words[1]));
 	return (0);
 }

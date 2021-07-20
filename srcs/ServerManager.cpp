@@ -135,9 +135,7 @@ void	ServerManager::checkClientSocket()
 		{
 			client = getClientByFd(pfds[i].fd);
 			
-			std::cout << "______________|begin parsing|____________________\n" << std::endl;
 			client.readRequest();
-			std::cout << "______________|end parsing  |____________________\n" << std::endl;
 			Reponse reponse(client.request, client.server.locations);
 			int size = reponse.header.size();
 			client.sendall(pfds[i].fd, reponse.header.c_str(), &size);

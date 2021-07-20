@@ -35,7 +35,6 @@ private:
 
 	void                    parseRequestString();
 	int						parseFirstLine(std::string line);
-	int						parseHeaders(std::stringstream &requestStream);
 	int						parseHeaderLine(std::string line);
 };
 
