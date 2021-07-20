@@ -2,6 +2,7 @@
 # define CLIENT_HPP
 
 #include "Server.hpp"
+#include "utils.hpp"
 
 #include <sys/types.h>
 #include <sys/socket.h>

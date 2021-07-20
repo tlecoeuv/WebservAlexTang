@@ -6,6 +6,8 @@
 #include "../includes/Server.hpp"
 #include "../includes/ServerManager.hpp"
 
+#include "../includes/utils.hpp"
+
 void end(int signal)
 {
 	(void)signal;
@@ -22,14 +24,14 @@ int main(int argc, char **argv)
 {
 	ServerManager	manager;
 
-    if (argc != 2)
-        exit(0);
-    try {
+	if (argc != 2)
+		exit(0);
+	try {
 		signal(SIGINT, end);
-        Config config(argv[1]);
+		Config config(argv[1]);
 		manager.initServers(config.getServer());
 	}
-    catch(std::exception& ex) {
+	catch(std::exception& ex) {
 		error(ex);
 		exit(0);
 	}
