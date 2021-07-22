@@ -5,6 +5,7 @@ Reponse::Reponse(Request request, std::map<std::string, Location> locations){
 	if (tmpUri.size() > 2 && tmpUri[tmpUri.size() - 1] == '/')
 			tmpUri.pop_back();
 	while (tmpUri.size()) {
+		//std::cout << "tmpUri: " << tmpUri << std::endl;
 		for (std::map<std::string, Location>::iterator it = locations.begin() ; it != locations.end(); ++it)
 			if (tmpUri == it->first){
 				makeReponse(request, it->second, tmpUri);
@@ -34,7 +35,7 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 		info["path"] += location.index;
 	}
 	else
-		info["path"] = location.root + request.uri.substr(tmpUri.size(), request.uri.size());
+		info["path"] = location.root + "/" + request.uri.substr(tmpUri.size(), request.uri.size());
 	if (!acceptedMethod(request.method, location.method))
 		return methodError(info, 405);
 	if (request.method == "GET")
