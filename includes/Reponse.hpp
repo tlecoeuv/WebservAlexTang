@@ -22,7 +22,7 @@ class 	Reponse {
     public:
         Reponse(){};
         Reponse(Request request, std::map<std::string, Location> locations);
-		void makeReponse(Request request, Location location);
+		void makeReponse(Request request, Location location, std::string tmpUri);
         void methodGet(std::map<std::string, std::string> info, Request request);
 		void methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body);
         void methodDelete(std::map<std::string, std::string> info);

@@ -1,12 +1,20 @@
 #include "../includes/Reponse.hpp"
 
 Reponse::Reponse(Request request, std::map<std::string, Location> locations){
-	for (std::map<std::string, Location>::iterator it = locations.begin() ; it != locations.end(); ++it){
-		//std::cout << request.uri << " " << it->first << std::endl;
-		if (request.uri == it->first){
-			makeReponse(request, it->second);
-			return ;
-		}
+	std::string tmpUri = request.uri;
+	if (tmpUri.size() > 2 && tmpUri[tmpUri.size() - 1] == '/')
+			tmpUri.pop_back();
+	while (tmpUri.size()) {
+		for (std::map<std::string, Location>::iterator it = locations.begin() ; it != locations.end(); ++it)
+			if (tmpUri == it->first){
+				makeReponse(request, it->second, tmpUri);
+				return ;
+			}
+		tmpUri.pop_back();
+		while (tmpUri.size() && tmpUri[tmpUri.size() - 1] != '/')
+			tmpUri.pop_back();
+		if (tmpUri.size() > 2)
+			tmpUri.pop_back();
 	}
 	std::map<std::string, std::string> info;
 
@@ -14,13 +22,19 @@ Reponse::Reponse(Request request, std::map<std::string, Location> locations){
 	methodError(info, 403);
 }
 
-void Reponse::makeReponse(Request request, Location location){
+void Reponse::makeReponse(Request request, Location location, std::string tmpUri){
 	std::map<std::string, std::string> info;
 
 	info["Content-Type"] = "text/html";
 	header = "HTTP/1.1 200 OK\n";
-	info["path"] = location.root + "/";
-	info["path"] += location.index;
+	if (request.uri.size() > 2 && request.uri[request.uri.size() - 1] == '/')
+		request.uri.pop_back();
+	if (tmpUri == request.uri) {
+		info["path"] = location.root + "/";
+		info["path"] += location.index;
+	}
+	else
+		info["path"] = location.root + request.uri.substr(tmpUri.size(), request.uri.size());
 	if (!acceptedMethod(request.method, location.method))
 		return methodError(info, 405);
 	if (request.method == "GET")
