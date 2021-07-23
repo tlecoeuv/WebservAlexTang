@@ -1,6 +1,7 @@
 #ifndef LOCATION_HPP
-#define LOCATION_HPP
+# define LOCATION_HPP
 
+/* Includes: */
 #include <vector>
 #include <string>
 

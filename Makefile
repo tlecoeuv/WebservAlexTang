@@ -19,7 +19,8 @@ SRC = main.cpp \
 		utils.cpp \
 		Server.cpp \
 		Reponse.cpp \
-		Client.cpp
+		Client.cpp \
+		CGI.cpp
 
 ### Librairies ###
 HEADERS = ./include/

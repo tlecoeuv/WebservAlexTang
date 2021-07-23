@@ -2,7 +2,8 @@
 
 Reponse::Reponse(Request request, std::map<std::string, Location> locations){
 	std::string tmpUri = request.uri;
-	if (tmpUri.size() > 2 && tmpUri[tmpUri.size() - 1] == '/')
+
+	if (tmpUri.size() > 1 && tmpUri[tmpUri.size() - 1] == '/')
 			tmpUri.pop_back();
 	while (tmpUri.size()) {
 		//std::cout << "tmpUri: " << tmpUri << std::endl;
@@ -14,7 +15,7 @@ Reponse::Reponse(Request request, std::map<std::string, Location> locations){
 		tmpUri.pop_back();
 		while (tmpUri.size() && tmpUri[tmpUri.size() - 1] != '/')
 			tmpUri.pop_back();
-		if (tmpUri.size() > 2)
+		if (tmpUri.size() > 1)
 			tmpUri.pop_back();
 	}
 	std::map<std::string, std::string> info;
@@ -38,12 +39,17 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 		info["path"] = location.root + "/" + request.uri.substr(tmpUri.size(), request.uri.size());
 	if (!acceptedMethod(request.method, location.method))
 		return methodError(info, 405);
-	if (request.method == "GET")
-		Reponse::methodGet(info, request);
+	if (CGIcapacity(info["path"], location)){
+		std::cout << "CGI on" << std::endl;
+		CGI cgi(location.cgi_path, info["path"], request);
+		methodCGI("cgiHeader");
+	}
+	else if (request.method == "GET")
+		methodGet(info, request);
 	else if (request.method == "DELETE")
-		Reponse::methodDelete(info);
+		methodDelete(info);
 	else if (request.method == "POST")
-		Reponse::methodPOST(info, request, location.max_body);
+		methodPOST(info, request, location.max_body);
 }
 
 int Reponse::acceptedMethod(std::string requestMethod, std::vector<std::string> locationsMethod){
@@ -116,10 +122,15 @@ void Reponse::methodDelete(std::map<std::string, std::string> info) {
 		methodError(info, 404);
 }
 
+void Reponse::methodCGI(std::string cgiHeader) {
+	(void)cgiHeader;
+}
+
 std::string Reponse::bodyError(std::string oldBody, int code) {
 	size_t start_pos = 0;
 	std::string value = "$1";
 	std::string tmp = std::to_string(code);
+
 	while((start_pos = oldBody.find(value, start_pos)) != std::string::npos) {
 		oldBody.replace(start_pos, value.length(), tmp);
 		start_pos += tmp.length();
@@ -135,11 +146,13 @@ std::string Reponse::bodyError(std::string oldBody, int code) {
 }
 
 void Reponse::methodError(std::map<std::string, std::string> info, int code) {
+	std::string body;
+
 	header = "HTTP/1.1 " + std::to_string(code) + " " + getMessage(code);
 	header += "Content-Type: ";
 	header += info["Content-Type"];
 	header += "\nContent-Length: ";
-	std::string body = bodyError(readFile("./www/error.html"), code);
+	body = bodyError(readFile("./www/error.html"), code);
 	header += std::to_string(body.size());
 	header += "\n\n";
 	header += body;
@@ -280,6 +293,7 @@ std::string Reponse::readFile(std::string file) {
 	int fd;
 	int res;
 	std::string result;
+
 	if((fd = open(file.c_str(), O_RDONLY)) < -1){
 		throw std::out_of_range("The file does not exists.");
 	}
@@ -289,4 +303,16 @@ std::string Reponse::readFile(std::string file) {
 	if (res < 0)
 		throw std::out_of_range("Error while reading.");
 	return (result);
+}
+
+bool Reponse::CGIcapacity(std::string path, Location location) {
+	std::string tmpCGI;
+
+	if (location.cgi_path.size())
+		for (size_t i = path.size() - 1; i > 0 ; i--)
+			if(path[i] == '.') {
+				tmpCGI = path.substr(i, path.size() - 1);
+				return (tmpCGI == location.cgi ? true : false);
+			}
+	return false;
 }

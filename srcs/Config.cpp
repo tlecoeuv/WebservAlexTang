@@ -17,31 +17,31 @@ void Config::parametre(std::string conf){
 				throw std::out_of_range("No server");
             Server newServer;
             while (++i < readParam.size() && readParam.at(i).compare(0, 6, "server") != 0){
-                if (!(readParam.at(i).compare(0, 6, "listen"))){
+                if (!(readParam.at(i).compare(0, 7, "listen "))){
 					if (readParam.at(i).size() > 6  && readParam.at(i).substr(7).find_first_not_of("0123456789") == std::string::npos)
                     	 newServer.port = std::stoi(readParam.at(i).substr(7));
 					else
 						throw std::out_of_range("Listen has no value");
 				}
-                else if (!(readParam.at(i).compare(0, 5, "error"))){
+                else if (!(readParam.at(i).compare(0, 6, "error "))){
 					if (readParam.at(i).size() > 5)
                     	newServer.error = readParam.at(i).substr(6);
 					else
 						throw std::out_of_range("Error has no value");
 				}
-                else if (!(readParam.at(i).compare(0, 4, "name"))){
+                else if (!(readParam.at(i).compare(0, 5, "name "))){
 					if (readParam.at(i).size() > 4)
                     	newServer.name = readParam.at(i).substr(5);
 					else
 						throw std::out_of_range("Name has no value");
 				}
-                else if (!(readParam.at(i).compare(0, 4, "host"))){
+                else if (!(readParam.at(i).compare(0, 5, "host "))){
 					if (readParam.at(i).size() > 4)
                     	newServer.name = readParam.at(i).substr(5);
 					else
 						throw std::out_of_range("Host has no value");
 				}
-                else if (!(readParam.at(i).compare(0, 8, "location"))){
+                else if (!(readParam.at(i).compare(0, 9, "location "))){
 					if (readParam.at(i).size() > 8 && readParam.at(i)[readParam.at(i).size() - 1] == '{')
                     	i = configLocation(i, readParam, newServer);
 					else
@@ -78,43 +78,43 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 			else
 				throw std::out_of_range("No index");
 		}
-        else if ((!readParam.at(index).compare(0, 10, "auto_index"))){
+        else if ((!readParam.at(index).compare(0, 11, "auto_index "))){
 			if (readParam.at(index).size() > 10)
             	newLocation.auto_index = std::stoi(readParam.at(index).substr(11));
 			else
 				throw std::out_of_range("No auto_index");
 		}
-        else if ((!readParam.at(index).compare(0, 4, "root"))){
+        else if ((!readParam.at(index).compare(0, 5, "root "))){
 			if (readParam.at(index).size() > 4)
             	newLocation.root = readParam.at(index).substr(5);
 			else
 				throw std::out_of_range("No root");
 		}
-        else if ((!readParam.at(index).compare(0, 3, "cgi"))){
+        else if ((!readParam.at(index).compare(0, 4, "cgi "))){
 			if (readParam.at(index).size() > 3)
             	newLocation.cgi = readParam.at(index).substr(4);
 			else
 				throw std::out_of_range("No cgi");
 		}
-        else if ((!readParam.at(index).compare(0, 8, "cgi_path"))){
+        else if ((!readParam.at(index).compare(0, 9, "cgi_path "))){
 			if (readParam.at(index).size() > 8)
             	newLocation.cgi_path = readParam.at(index).substr(9);
 			else
 				throw std::out_of_range("No cgi_path");
 		}
-        else if ((!readParam.at(index).compare(0, 8, "max_body"))){
+        else if ((!readParam.at(index).compare(0, 9, "max_body "))){
 			if (readParam.at(index).size() > 8)
             	newLocation.max_body = readParam.at(index).substr(9);
 			else
 				throw std::out_of_range("No max_body");
 		}
-        else if ((!readParam.at(index).compare(0, 4, "auth"))){
+        else if ((!readParam.at(index).compare(0, 5, "auth "))){
 			if (readParam.at(index).size() > 4)
             	newLocation.auth = readParam.at(index).substr(5);
 			else
 				throw std::out_of_range("No auth");
 		}
-        else if ((!readParam.at(index).compare(0, 6, "method"))){
+        else if ((!readParam.at(index).compare(0, 7, "method "))){
 			if (readParam.at(index).size() > 6)
 				for (size_t i = 7; readParam.at(index)[i] ;){
 					std::string newMethod;
