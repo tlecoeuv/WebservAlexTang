@@ -1,5 +1,4 @@
-#include "../includes/Server.hpp"
-#include "../includes/SocketManager.hpp"
+#include "Server.hpp"
 
 int		main()
 {
@@ -8,11 +7,11 @@ int		main()
 	std::string				error("error");
 	std::vector<Location>	locations;
 
-	Server		testServ(8080, host, name, error, locations);
-	ServerManager	manager;
+	//Server		testServ(8080, host, name, error, locations);
+	//ServerManager	manager;
 
-	manager.add_server(testServ);
-	manager.start_servers();
+	//manager.add_server(testServ);
+	//manager.start_servers();
 
 	return 0;
 }

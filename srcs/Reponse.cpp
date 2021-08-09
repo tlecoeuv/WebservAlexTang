@@ -1,6 +1,6 @@
-#include "../includes/Reponse.hpp"
+#include "Reponse.hpp"
 
-Reponse::Reponse(Request request, std::map<std::string, Location> locations){
+Reponse::Reponse(Request r, Server s, int cfd): request(r), locations(s.locations), clientfd(cfd), server(s) {
 	std::string tmpUri = request.uri;
 
 	if (tmpUri.size() > 1 && tmpUri[tmpUri.size() - 1] == '/')
@@ -41,7 +41,7 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 		return methodError(info, 405);
 	if (CGIcapacity(info["path"], location)){
 		std::cout << "CGI on" << std::endl;
-		CGI cgi(location.cgi_path, info["path"], request);
+		CGI cgi(location.cgi_path, info["path"], request, clientfd, server);
 		methodCGI("cgiHeader");
 	}
 	else if (request.method == "GET")

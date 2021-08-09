@@ -1,4 +1,4 @@
-#include "../includes/Request.hpp"
+#include "Request.hpp"
 
 // Constructor request
 Request::Request() : badRequest(false)

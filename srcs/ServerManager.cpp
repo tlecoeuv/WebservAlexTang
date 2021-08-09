@@ -1,4 +1,4 @@
-#include "../includes/ServerManager.hpp"
+#include "ServerManager.hpp"
 
 /* Constructors and Destructors: */
 
@@ -136,7 +136,7 @@ void	ServerManager::checkClientSocket()
 			client = getClientByFd(pfds[i].fd);
 			
 			client.readRequest();
-			Reponse reponse(client.request, client.server.locations);
+			Reponse reponse(client.request, client.server, client.fd);
 			int size = reponse.header.size();
 			client.sendall(pfds[i].fd, reponse.header.c_str(), &size);
 			if (client.endConnexion)
