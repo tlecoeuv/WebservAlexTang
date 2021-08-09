@@ -23,7 +23,7 @@ SRC = main.cpp \
 		CGI.cpp
 
 ### Librairies ###
-HEADERS = ./include/
+HEADERS = ./includes/
 INC = minishell.h
 vpath %.h $(HEADERS)
 
