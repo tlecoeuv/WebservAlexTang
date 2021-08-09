@@ -1,5 +1,5 @@
-#ifndef SERVEUR_HPP
-# define SERVEUR_HPP
+#ifndef SERVER_HPP
+# define SERVER_HPP
 
 /*Library: */
 
@@ -12,9 +12,9 @@
 /* Includes: */
 #include "Location.hpp"
 #include "Request.hpp"
-#include "Reponse.hpp"
+#include "Server.hpp"
 
-class		Server
+class Server
 {
 public:
 	Server() {};
@@ -30,7 +30,6 @@ public:
 	std::string							error;
 	std::map<std::string, Location>		locations;
 	Request								request;
-	Reponse								reponse;
 	int									sd;
 
 private:

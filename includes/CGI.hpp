@@ -5,16 +5,20 @@
 #include <string>
 
 /* Includes: */
+#include "Server.hpp"
 #include "Request.hpp"
 #include "Reponse.hpp"
 
 class CGI {
 	public:
+		Server server;
 		std::string cgiPath;
 		std::string ressourcePath;
 		Request request;
+		int clientfd;
 
-		CGI(std::string cp, std::string rp, Request req);
+		CGI(std::string cp, std::string rp, Request req, int cfd, Server s);
+		std::string headerCGI();
 
 	private:
 

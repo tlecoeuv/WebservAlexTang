@@ -16,15 +16,20 @@
 /* Includes: */
 #include "Request.hpp"
 #include "Location.hpp"
+#include "Server.hpp"
 #include "CGI.hpp"
 
 class 	Reponse {
     public:
         std::string header;
+		Request request;
+		std::map<std::string, Location> locations;
+		int clientfd;
+		Server server;
 
     public:
         Reponse(){};
-        Reponse(Request request, std::map<std::string, Location> locations);
+        Reponse(Request r, Server s, int cfd);
 		void makeReponse(Request request, Location location, std::string tmpUri);
         void methodGet(std::map<std::string, std::string> info, Request request);
 		void methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body);
