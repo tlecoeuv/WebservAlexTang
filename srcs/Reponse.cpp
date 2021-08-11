@@ -40,10 +40,11 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 	//std::cout << "Path: " << info["path"] << std::endl;
 	if (!acceptedMethod(request.method, location.method))
 		return methodError(info, 405);
+	URI uri(request.uri);
 	if (CGIcapacity(info["path"], location)){
 		std::cout << "CGI on" << std::endl;
-		CGI cgi(location.cgi_path, info["path"], request, clientfd, server);
-		methodCGI("cgiHeader");
+		CGI cgi(location.cgi_path, info["path"], request, clientfd, server, tmpUri, uri);
+		methodCGI(cgi.headerCGI().c_str());
 	}
 	else if (request.method == "GET")
 		methodGet(info, request);
@@ -123,8 +124,13 @@ void Reponse::methodDelete(std::map<std::string, std::string> info) {
 		methodError(info, 404);
 }
 
-void Reponse::methodCGI(std::string cgiHeader) {
-	(void)cgiHeader;
+void Reponse::methodCGI(const char *cgiHeader) {
+	std::cout << cgiHeader << std::endl;
+	//pid_t pid;
+	//int exec_res;
+	//char **exec_args;
+	//int tmp_fd;
+	//int fd[2];
 }
 
 std::string Reponse::bodyError(std::string oldBody, int code) {
@@ -157,89 +163,6 @@ void Reponse::methodError(std::map<std::string, std::string> info, int code) {
 	header += std::to_string(body.size());
 	header += "\n\n";
 	header += body;
-}
-
-std::string Reponse::getMIMEType(std::string filename) {
-	std::map<std::string, std::string> MIME;
-	std::string extension;
-	size_t i;
-
-	i = filename.size() - 1;
-	while (i > 0 && filename[i] != '.')
-		--i;
-	if (i == 0)
-		return ("text/plain");
-	extension = filename.substr(i + 1, filename.size());
-	MIME["aac"] = "audio/aac";
-	MIME["abw"] = "application/x-abiword";
-	MIME["arc"] = "application/octet-stream";
-	MIME["avi"] = "video/x-msvideo";
-	MIME["azw"] = "application/vnd.amazon.ebook";
-	MIME["bin"] = "application/octet-stream";
-	MIME["bmp"] = "image/bmp";
-	MIME["bz"] = "application/x-bzip";
-	MIME["bz2"] = "application/x-bzip2";
-	MIME["csh"] = "application/x-csh";
-	MIME["css"] = "text/css";
-	MIME["csv"] = "text/csv";
-	MIME["doc"] = "application/msword";
-	MIME["docx"] = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-	MIME["eot"] = "application/vnd.ms-fontobject";
-	MIME["epub"] = "application/epub+zip";
-	MIME["gif"] = "image/gif";
-	MIME["htm"] = "text/html";
-	MIME["html"] = "text/html";
-	MIME["ico"] = "image/x-icon";
-	MIME["ics"] = "text/calendar";
-	MIME["jar"] = "application/java-archive";
-	MIME["jpeg"] = "image/jpeg";
-	MIME["jpg"] = "image/jpeg";
-	MIME["js"] = "application/javascript";
-	MIME["json"] = "application/json";
-	MIME["mid"] = "audio/midi";
-	MIME["midi"] = "audio/midi";
-	MIME["mpeg"] = "video/mpeg";
-	MIME["mpkg"] = "application/vnd.apple.installer+xml";
-	MIME["odp"] = "application/vnd.oasis.opendocument.presentation";
-	MIME["ods"] = "application/vnd.oasis.opendocument.spreadsheet";
-	MIME["odt"] = "application/vnd.oasis.opendocument.text";
-	MIME["oga"] = "audio/ogg";
-	MIME["ogv"] = "video/ogg";
-	MIME["ogx"] = "application/ogg";
-	MIME["otf"] = "font/otf";
-	MIME["png"] = "image/png";
-	MIME["pdf"] = "application/pdf";
-	MIME["ppt"] = "application/vnd.ms-powerpoint";
-	MIME["pptx"] = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
-	MIME["rar"] = "application/x-rar-compressed";
-	MIME["rtf"] = "application/rtf";
-	MIME["sh"] = "application/x-sh";
-	MIME["svg"] = "image/svg+xml";
-	MIME["swf"] = "application/x-shockwave-flash";
-	MIME["tar"] = "application/x-tar";
-	MIME["tif"] = "image/tiff";
-	MIME["tiff"] = "image/tiff";
-	MIME["ts"] = "application/typescript";
-	MIME["ttf"] = "font/ttf";
-	MIME["vsd"] = "application/vnd.visio";
-	MIME["wav"] = "audio/x-wav";
-	MIME["weba"] = "audio/webm";
-	MIME["webm"] = "video/webm";
-	MIME["webp"] = "image/webp";
-	MIME["woff"] = "font/woff";
-	MIME["woff2"] = "font/woff2";
-	MIME["xhtml"] = "application/xhtml+xml";
-	MIME["xls"] = "application/vnd.ms-excel";
-	MIME["xlsx"] = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-	MIME["xml"] = "application/xml";
-	MIME["xul"] = "application/vnd.mozilla.xul+xml";
-	MIME["zip"] = "application/zip";
-	MIME["3gp"] = "audio/3gpp";
-	MIME["3g2"] = "audio/3gpp2";
-	MIME["7z"] = "application/x-7z-compressed";
-	if (MIME.count(extension))
-		return (MIME[extension]);
-	return ("application/octet-stream");
 }
 
 std::string Reponse::getMessage(size_t code) {

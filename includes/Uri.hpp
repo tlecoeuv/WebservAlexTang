@@ -14,7 +14,7 @@
 /* Library: */
 #include <string>
 #include <iostream>
-
+#include <vector>
 /* Includes: */
 
 class URI {
@@ -23,10 +23,14 @@ class URI {
 		std::string authority;
 		std::string path;
 		std::string query;
+		std::vector<std::string> queryName;
+		std::vector<std::string> queryValue;
 		std::string fragment;
 	
 	public:
+		URI() {};
 		URI(std::string uri);
+		void parseQuery();
 };
 
 #endif
