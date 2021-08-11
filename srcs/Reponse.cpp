@@ -41,7 +41,7 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 	if (!acceptedMethod(request.method, location.method))
 		return methodError(info, 405);
 	URI uri(request.uri);
-	if (CGIcapacity(info["path"], location)){
+	if (CGIcapacity(uri.path, location)){
 		std::cout << "CGI on" << std::endl;
 		CGI cgi(location.cgi_path, info["path"], request, clientfd, server, tmpUri, uri);
 		methodCGI(cgi.headerCGI().c_str());
