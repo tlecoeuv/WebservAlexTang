@@ -37,7 +37,7 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 	}
 	else
 		info["path"] = location.root + "/" + request.uri.substr(tmpUri.size(), request.uri.size());
-	std::cout << "Path: " << info["path"] << std::endl;
+	//std::cout << "Path: " << info["path"] << std::endl;
 	if (!acceptedMethod(request.method, location.method))
 		return methodError(info, 405);
 	if (CGIcapacity(info["path"], location)){

@@ -18,6 +18,7 @@
 #include "Location.hpp"
 #include "Server.hpp"
 #include "CGI.hpp"
+#include "Uri.hpp"
 
 class 	Reponse {
     public:

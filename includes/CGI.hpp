@@ -8,6 +8,7 @@
 #include "Server.hpp"
 #include "Request.hpp"
 #include "Reponse.hpp"
+#include "Uri.hpp"
 
 class CGI {
 	public:

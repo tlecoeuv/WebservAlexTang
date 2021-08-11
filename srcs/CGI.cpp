@@ -14,11 +14,12 @@ std::string CGI::headerCGI() {
 	std::string tmp;
 	size_t i;
 	//size_t j;
-	
+	URI uri(request.uri);
+
 	std::string ret;
 	ret = "GATEWAY_INTERFACE=CGI/1.1\n";
 	ret += "PATH_TRANSLATED=" + ressourcePath + "\n";
-	//ret += "QUERY_STRING=" + _getQueryString + "\n";
+	ret += "QUERY_STRING=" + uri.query + "\n";
 	ret += "REQUEST_METHOD=" + request.method + "\n";
 	ret += "CONTENT_LENGTH=" + std::to_string(request.body.length()) + "\n";
 	//for (size_t u = 0; u < _request.getHeaderFields().size(); u++)
@@ -30,7 +31,6 @@ std::string CGI::headerCGI() {
 	ret += "REMOTE_IDENT=\n";
 	ret += "REDIRECT_STATUS=200\n";
 	ret += "REMOTE_ADDR=" + std::to_string(clientfd) + "\n";
-	//header["REMOTE_ADDR"] = _request.getClientIP();
 	//header["SCRIPT_NAME"] = _location.name + ((_location.name[_location.name.length() - 1] == '/') ? "" : "/") + replace(_ressource_path, _location.root, "");
 	//header["PATH_INFO"] = _removeQueryheader(_request.getRequestLine()._request_target);
 	ret += "SCRIPT_FILENAME=" + ressourcePath + "\n";
