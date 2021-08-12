@@ -38,7 +38,7 @@ class 	Reponse {
         void methodGet(std::map<std::string, std::string> info, Request request);
 		void methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body);
         void methodDelete(std::map<std::string, std::string> info);
-		void methodCGI(const char *cgiHeader);
+		void methodCGI(CGI cgi, std::map<std::string, std::string> info, std::string path, URI uri);
         void methodError(std::map<std::string, std::string> info, int code);
 		int acceptedMethod(std::string requestMethod, std::vector<std::string> locationsMethod);
 		std::string bodyError(std::string oldBody, int code);

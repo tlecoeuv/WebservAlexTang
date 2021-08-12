@@ -2,11 +2,10 @@
 #include <unistd.h>
 #include <signal.h>
 
-#include "../includes/Config.hpp"
-#include "../includes/Server.hpp"
-#include "../includes/ServerManager.hpp"
-
-#include "../includes/utils.hpp"
+#include "Config.hpp"
+#include "Server.hpp"
+#include "ServerManager.hpp"
+#include "utils.hpp"
 
 void end(int signal)
 {

@@ -3,11 +3,11 @@
 
 /* Library: */
 #include <string>
+#include <cstdlib>
 
 /* Includes: */
 #include "Server.hpp"
 #include "Request.hpp"
-#include "Reponse.hpp"
 #include "Uri.hpp"
 
 std::string getMIMEType(std::string filename);
@@ -23,10 +23,12 @@ class CGI {
 		URI uri;
 
 		CGI(std::string cp, std::string rp, Request req, int cfd, Server s, std::string nl, URI u);
-		std::string headerCGI();
-
+		char** headerCGI();
 	private:
 
 };
+
+void freeCGI(char **tab);
+char**	doArgv(std::string path, URI uri);
 
 #endif

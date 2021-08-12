@@ -44,7 +44,7 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 	if (CGIcapacity(uri.path, location)){
 		std::cout << "CGI on" << std::endl;
 		CGI cgi(location.cgi_path, info["path"], request, clientfd, server, tmpUri, uri);
-		methodCGI(cgi.headerCGI().c_str());
+		methodCGI(cgi, info, tmpUri, uri);
 	}
 	else if (request.method == "GET")
 		methodGet(info, request);
@@ -124,13 +124,46 @@ void Reponse::methodDelete(std::map<std::string, std::string> info) {
 		methodError(info, 404);
 }
 
-void Reponse::methodCGI(const char *cgiHeader) {
-	std::cout << cgiHeader << std::endl;
-	//pid_t pid;
-	//int exec_res;
-	//char **exec_args;
-	//int tmp_fd;
-	//int fd[2];
+void Reponse::methodCGI(CGI cgi, std::map<std::string, std::string> info, std::string path, URI uri) {
+	pid_t pid;
+	int fd[2];
+request.body = "<?php php_info() ?>";
+	if (pipe(fd) == -1){
+		methodError(info, 500);
+		return ;
+	}
+	pid = fork();
+	if (pid == 0) {
+		char ** argv = doArgv(path, uri);
+		close(fd[1]);
+		dup2(fd[0], 0);
+		int tmp_fd = open("/tmp/fileCGI", O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
+		if (tmp_fd < 0){
+			methodError(info, 500);
+			exit(0);
+		}
+		dup2(tmp_fd, 1);
+		dup2(tmp_fd, 2);
+		execve(path.c_str(), argv, cgi.headerCGI());
+		close(0);
+		close(tmp_fd);
+		close(fd[0]);
+		exit(0);
+	}
+	else {
+		close(fd[0]);
+		std::cout << "request.body " << request.body << std::endl;
+		write(fd[1], request.body.c_str(), request.body.length());
+		close(fd[1]);
+		waitpid(-1, NULL, 0);
+	}
+	std::vector<std::string> fileCGI = fileToVector("/tmp/fileCGI", 0);
+	std::string newfile;
+	for (size_t i = 0; i < fileCGI.size(); i++){
+		newfile += fileCGI.at(i) + "\n";
+	}
+	std::cout << std::endl << "test" << newfile << std::endl;
+	return ;
 }
 
 std::string Reponse::bodyError(std::string oldBody, int code) {
