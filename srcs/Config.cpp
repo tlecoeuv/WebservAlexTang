@@ -18,10 +18,15 @@ void Config::parametre(std::string conf){
             Server newServer;
             while (++i < readParam.size() && readParam.at(i).compare(0, 6, "server") != 0){
                 if (!(readParam.at(i).compare(0, 7, "listen "))){
-					if (readParam.at(i).size() > 6  && readParam.at(i).substr(7).find_first_not_of("0123456789") == std::string::npos)
-                    	 newServer.port = std::stoi(readParam.at(i).substr(7));
+					if (readParam.at(i).size() > 6  && readParam.at(i).substr(7).find_first_not_of("0123456789") == std::string::npos){
+						newServer.port = std::stoi(readParam.at(i).substr(7));
+						for (size_t j = 0; j < confServer.size() ; j++){
+							if (newServer.port == confServer.at(j).port)
+								throw std::out_of_range("Port has been set several times ");
+						}
+					}
 					else
-						throw std::out_of_range("Listen has no value");
+						throw std::out_of_range("Port has no value");
 				}
                 else if (!(readParam.at(i).compare(0, 6, "error "))){
 					if (readParam.at(i).size() > 5)
