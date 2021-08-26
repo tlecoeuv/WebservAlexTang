@@ -4,6 +4,7 @@
 /* Library: */
 #include <string>
 #include <cstdlib>
+#include <string.h>
 
 /* Includes: */
 #include "Server.hpp"

@@ -17,7 +17,11 @@ int Client::sendall(int s, const char *buf, int *len)
 
 	while(total < *len) {
 		n = send(s, buf+total, bytesleft, 0);
-		if (n == -1) { break; }
+		if (n == -1)
+		{
+			endConnexion = true;
+			break;
+		}
 		total += n;
 		bytesleft -= n;
 	}
@@ -29,27 +33,25 @@ int Client::sendall(int s, const char *buf, int *len)
 
 void    Client::readRequest()
 {
-	bool     first_recv = true;
-	int     nbytes = 4096;
+	char	buf[RECV_SIZE] = {0};
+	int		nbytes;
 
-	while (nbytes == 4096)
+	nbytes = recv(fd, buf, RECV_SIZE - 1, 0);
+	if (nbytes == 0)
 	{
-		nbytes = recv(fd, buf, 4096, 0);
-		if (first_recv && nbytes == 0)
-		{
-			endConnexion = true;
-			printf("Client on fd %d has closed connexion\n", fd);
-		}
-		if (nbytes < 0)
-		{
-			perror("recv");
-			endConnexion = true;
-		}
-		first_recv = false;
-		requestString += buf;
+		endConnexion = true;
+		std::cout << "Client on fd: " << fd << " has closed connexion" << std::endl;
+	}
+	else if (nbytes < 0)
+	{
+		perror("recv");
+		endConnexion = true;
 	}
 	if (!endConnexion)
+	{
+		requestString = buf;
 		parseRequestString();
+	}
 }
 
 void    Client::parseRequestString()

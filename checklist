@@ -7,14 +7,14 @@ Check list correction:
     -|V| Ask which function they used for I/O Multiplexing.
     -|V| Ask to get an explanation of how select (or equivalent) is working.
     -|V| Ask if they use only one select (or equivalent) and how they've managed the server accept and the client read/write.
-    -|?| the select (or equivalent) should be in the main loop and should check fd for read and write AT THE SAME TIME, if not please give a 0 and stop the evaluation.
-    -|X| There should be only one read or one write per client per select (or equivalent). Ask to show you the code that goes from the select (or equivalent) to the read and write of a client.
-    -|?| Search for all read/recv/write/send on a socket and check that if an error returned the client is removed
-    -|?| Search for all read/recv/write/send and check if the returned value is well checked. (checking only -1 or 0 is not good you should check both)
+    -|V| the select (or equivalent) should be in the main loop and should check fd for read and write AT THE SAME TIME, if not please give a 0 and stop the evaluation.
+    -|V| There should be only one read or one write per client per select (or equivalent). Ask to show you the code that goes from the select (or equivalent) to the read and write of a client.
+    -|V| Search for all read/recv/write/send on a socket and check that if an error returned the client is removed
+    -|V| Search for all read/recv/write/send and check if the returned value is well checked. (checking only -1 or 0 is not good you should check both)
     -|V| If a check of errno is done after read/recv/write/send. Please stop the evaluation and put a mark to 0
-    -|X| Writing or reading ANY file descriptor without going through the select (or equivalent) is strictly FORBIDDEN
+    -|V| Writing or reading ANY file descriptor without going through the select (or equivalent) is strictly FORBIDDEN
     -|V| The project must compile without any re-link issue if not use the compile flag.
-    -|X| If any point is unclear or is not correct use the flag for incomplete work.
+    -|V| If any point is unclear or is not correct use the flag for incomplete work.
 
 *| | Configuration:
 
@@ -52,7 +52,7 @@ Check list correction:
 *| |Port issues:
 
     -|V| In the configuration file setup multiple ports and use different websites, use the browser to check that the configuration is working as expected, and show the right website.
-    -|X| In the configuration try to setup the same port multiple times. It should not work.
+    -|V| In the configuration try to setup the same port multiple times. It should not work.
     -|V| Launch multiple servers at the same time with different configurations but with common ports. Is it working? If it is working, ask why the server should work if one of the configurations isn't working. keep going
 
 *| |Siege & stress test:

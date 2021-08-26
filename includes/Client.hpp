@@ -13,6 +13,8 @@
 #include <string>
 #include <sstream>
 
+#define RECV_SIZE	65536
+
 class Client
 {
 public:
@@ -30,7 +32,6 @@ public:
 	int                     sendall(int s, const char *buf, int *len);
 
 private:
-	char                    buf[4096];
 	std::string             requestString;
 
 	void                    parseRequestString();
