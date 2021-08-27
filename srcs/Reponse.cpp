@@ -85,7 +85,10 @@ void Reponse::methodPOST(std::map<std::string, std::string> info, Request reques
 	struct stat buf;
 
 	if (max_body.size() && (int)request.body.size() > atoi(max_body.c_str()))
+	{
 		methodError(info, 413);
+		return ;
+	}
 	std::cout << "request.body: " << request.body << std::endl;
 	if ((stat(info["path"].c_str(), &buf)) == 0){
 		if (S_ISREG(buf.st_mode)){
