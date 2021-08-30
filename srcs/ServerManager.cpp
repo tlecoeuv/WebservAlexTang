@@ -135,16 +135,10 @@ void	ServerManager::checkClientSocket()
 		{
 			client = getClientByFd(pfds[i].fd);
 			client.readRequest();
-			if (!client.endConnexion)
-			{
-				Reponse reponse(client.request, client.server, client.fd);
-				int size = reponse.header.size();
-				client.sendall(pfds[i].fd, reponse.header.c_str(), &size);
-			}
-			close(pfds[i].fd);
-			del_from_pfds(i);
-			removeClient(client);
-/*			if (client.endConnexion)
+			Reponse reponse(client.request, client.server, client.fd);
+			int size = reponse.header.size();
+			client.sendall(pfds[i].fd, reponse.header.c_str(), &size);
+			if (client.endConnexion)
 			{
 				close(pfds[i].fd);
 				del_from_pfds(i);
@@ -152,7 +146,6 @@ void	ServerManager::checkClientSocket()
 			}
 			else
 				client.request.clear();
-*/
 		}
 	}
 }
@@ -166,7 +159,6 @@ void	ServerManager::removeClient(Client &client)
 		if ((*it).fd == client.fd)
 			break ;
 	}
-	std::cout << "client on fd: " << (*it).fd << " removed" << std::endl;
 	clients.erase(it);
 }
 
