@@ -145,5 +145,5 @@ std::string getMIMEType(std::string filename) {
 	MIME["7z"] = "application/x-7z-compressed";
 	if (MIME.count(extension))
 		return (MIME[extension]);
-	return ("application/octet-stream");
+	return ("text/html");
 }

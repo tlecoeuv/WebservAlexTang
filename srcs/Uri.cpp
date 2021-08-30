@@ -1,12 +1,16 @@
 #include "Uri.hpp"
 
-URI::URI(std::string uri){
+URI::URI(std::string uri, std::string location, std::string root){
 	size_t i = 0;
-	std::cout << "uri: " << uri << std::endl;
-	std::cout << "uri.size(): " << uri.size() << std::endl;
+	//std::cout << "uri: " << uri << std::endl;
+	if (root[root.size() - 1] == '/')
+		root.pop_back();
+	if (root[0] == '.')
+		root = root.substr(1, root.size() - 1);
 	for (size_t j = 0; j < uri.size(); j++) {
 		if (path.size() == 0 && (j + 1 == uri.size() || uri.at(j) == '?')) {
 			path = uri.substr(i, j - i + (uri.at(j) == '?'? 0 : 1));
+			path = root + path.substr(location.size(), path.size() - location.size());
 			i = j + 1;
 		}
 		if (path.size() && query.size() == 0 && (uri.at(j) == '#' || j + 1 == uri.size())) {
@@ -17,9 +21,9 @@ URI::URI(std::string uri){
 			break;
 		}
 	}
-	std::cout << "Path: " << path << std::endl;
-	std::cout << "Query: " << query << std::endl;
-	std::cout << "Fragment: " << fragment << std::endl;
+	//std::cout << "Path: " << path << std::endl;
+	//std::cout << "Query: " << query << std::endl;
+	//std::cout << "Fragment: " << fragment << std::endl;
 }
 
 void URI::parseQuery() {

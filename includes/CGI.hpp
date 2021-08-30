@@ -5,6 +5,9 @@
 #include <string>
 #include <cstdlib>
 #include <string.h>
+#include <unistd.h>
+#include <fstream>
+#include <iostream>
 
 /* Includes: */
 #include "Server.hpp"
@@ -18,13 +21,15 @@ class CGI {
 		Server server;
 		std::string cgiPath;
 		std::string ressourcePath;
+		std::string body;
 		Request request;
 		int clientfd;
 		std::string nameLocation;
 		URI uri;
 
 		CGI(std::string cp, std::string rp, Request req, int cfd, Server s, std::string nl, URI u);
-		char** headerCGI();
+		void cgi_body(std::string path);
+		char** headerCGI(std::string body, char ** argv);
 	private:
 
 };

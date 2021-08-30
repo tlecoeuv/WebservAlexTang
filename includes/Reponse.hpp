@@ -36,15 +36,17 @@ class 	Reponse {
         Reponse(){};
         Reponse(Request r, Server s, int cfd);
 		void makeReponse(Request request, Location location, std::string tmpUri);
-        void methodGet(std::map<std::string, std::string> info, Request request);
+        void methodGet(std::map<std::string, std::string> info, Request request, std::string body);
 		void methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body);
         void methodDelete(std::map<std::string, std::string> info);
-		void methodCGI(CGI cgi, std::map<std::string, std::string> info, std::string path, URI uri);
+		std::string methodCGI(CGI cgi, std::string path, URI uri);
+		void readBodyCGI(std::string body);
         void methodError(std::map<std::string, std::string> info, int code);
 		int acceptedMethod(std::string requestMethod, std::vector<std::string> locationsMethod);
 		std::string bodyError(std::string oldBody, int code);
         std::string getMessage(size_t code);
         std::string readFile(std::string file);
+		void printResponse();
 		bool CGIcapacity(std::string path, Location location);
 };
 

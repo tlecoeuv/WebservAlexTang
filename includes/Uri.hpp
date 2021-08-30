@@ -29,7 +29,7 @@ class URI {
 	
 	public:
 		URI() {};
-		URI(std::string uri);
+		URI(std::string uri, std::string location, std::string root);
 		void parseQuery();
 };
 

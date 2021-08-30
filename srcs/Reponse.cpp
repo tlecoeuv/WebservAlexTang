@@ -2,7 +2,6 @@
 
 Reponse::Reponse(Request r, Server s, int cfd): request(r), locations(s.locations), clientfd(cfd), server(s) {
 	std::string tmpUri = request.uri;
-
 	if (tmpUri.size() > 1 && tmpUri[tmpUri.size() - 1] == '/')
 			tmpUri.pop_back();
 	while (tmpUri.size()) {
@@ -26,6 +25,7 @@ Reponse::Reponse(Request r, Server s, int cfd): request(r), locations(s.location
 
 void Reponse::makeReponse(Request request, Location location, std::string tmpUri){
 	std::map<std::string, std::string> info;
+	std::string body;
 
 	info["Content-Type"] = "text/html";
 	header = "HTTP/1.1 200 OK\n";
@@ -37,17 +37,15 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 	}
 	else
 		info["path"] = location.root + "/" + request.uri.substr(tmpUri.size(), request.uri.size());
-	//std::cout << "Path: " << info["path"] << std::endl;
 	if (!acceptedMethod(request.method, location.method))
 		return methodError(info, 405);
-	URI uri(request.uri);
+	URI uri(request.uri, tmpUri, location.root);
 	if (CGIcapacity(uri.path, location)){
-		std::cout << "CGI on" << std::endl;
 		CGI cgi(location.cgi_path, info["path"], request, clientfd, server, tmpUri, uri);
-		methodCGI(cgi, info, tmpUri, uri);
+		body = methodCGI(cgi, location.cgi_path, uri);
 	}
-	else if (request.method == "GET")
-		methodGet(info, request);
+	if (request.method == "GET")
+		methodGet(info, request, body);
 	else if (request.method == "DELETE")
 		methodDelete(info);
 	else if (request.method == "POST")
@@ -62,23 +60,27 @@ int Reponse::acceptedMethod(std::string requestMethod, std::vector<std::string> 
 	return 0;
 }
 
-void Reponse::methodGet(std::map<std::string, std::string> info, Request request){
-	std::string body; 
+void Reponse::methodGet(std::map<std::string, std::string> info, Request request, std::string body){ 
 	(void)request;
 
 	info["Content-Type"] = getMIMEType(info["path"]);
-	try {
-		body = readFile(info["path"]);
+	if (body.size() == 0) {
+		try {
+			body = readFile(info["path"]);
+		}
+		catch (const std::exception &e){
+			methodError(info, 403);
+		}
+		header += "Content-Type: ";
+		header += info["Content-Type"];
+		header += "\nContent-Length: ";
+		header += std::to_string(body.size());
+		header += "\n\n";
+		header += body;
 	}
-	catch (const std::exception &e){
-		methodError(info, 403);
-	}
-	header += "Content-Type: ";
-	header += info["Content-Type"];
-	header += "\nContent-Length: ";
-	header += std::to_string(body.size());
-	header += "\n\n";
-	header += body;
+	else
+		readBodyCGI(body);
+	printResponse();
 }
 
 void Reponse::methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body){
@@ -127,46 +129,76 @@ void Reponse::methodDelete(std::map<std::string, std::string> info) {
 		methodError(info, 404);
 }
 
-void Reponse::methodCGI(CGI cgi, std::map<std::string, std::string> info, std::string path, URI uri) {
-	pid_t pid;
-	int fd[2];
-request.body = "<?php php_info() ?>";
-	if (pipe(fd) == -1){
-		methodError(info, 500);
-		return ;
-	}
+std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
+	pid_t	pid;
+	char	buffer[65536] = {0};
+	int		realin = dup(STDIN_FILENO);
+	int		realout = dup(STDOUT_FILENO);
+	FILE *filefdin = tmpfile();
+	FILE *filefdout = tmpfile();
+	long	fd[2] = {fileno(filefdin), fileno(filefdout)};
+	std::string cgibody;
+	std::string body;
+
+	char ** argv = doArgv(path, uri);
+	cgi.cgi_body(argv[1]);
+	write(fd[0], cgi.body.c_str(), cgi.body.size());
+	lseek(fd[0], 0, SEEK_SET);
 	pid = fork();
 	if (pid == 0) {
-		char ** argv = doArgv(path, uri);
-		close(fd[1]);
-		dup2(fd[0], 0);
-		int tmp_fd = open("/tmp/fileCGI", O_RDWR | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
-		if (tmp_fd < 0){
-			methodError(info, 500);
-			exit(0);
-		}
-		dup2(tmp_fd, 1);
-		dup2(tmp_fd, 2);
-		execve(path.c_str(), argv, cgi.headerCGI());
-		close(0);
-		close(tmp_fd);
-		close(fd[0]);
+		dup2(fd[0], STDIN_FILENO);
+		dup2(fd[1], STDOUT_FILENO);
+		execve(argv[0], argv, cgi.headerCGI(cgi.body, argv));
 		exit(0);
 	}
 	else {
-		close(fd[0]);
-		std::cout << "request.body " << request.body << std::endl;
-		write(fd[1], request.body.c_str(), request.body.length());
-		close(fd[1]);
 		waitpid(-1, NULL, 0);
+		lseek(fd[1], 0, SEEK_SET);
+		while ((read(fd[1], buffer, 65536 - 1))) {
+			body += buffer;
+			memset(buffer, 0, 65536);
+		}
+		dup2(realin, STDIN_FILENO);
+		dup2(realout, STDOUT_FILENO);
 	}
-	std::vector<std::string> fileCGI = fileToVector("/tmp/fileCGI", 0);
-	std::string newfile;
-	for (size_t i = 0; i < fileCGI.size(); i++){
-		newfile += fileCGI.at(i) + "\n";
+	close(realin);
+	close(realout);
+	fclose(filefdin);
+	fclose(filefdout);
+	close(fd[0]);
+	close(fd[1]);
+	for (size_t i = 0; argv[i]; i++)
+		free(argv[i]);
+	free(argv);
+	return body;
+}
+
+void Reponse::readBodyCGI(std::string body){
+	size_t i = 0;
+	for(; i < body.size();) {
+		if (body.substr(i, 14) == "Content-Type: ") {
+			int j = 0;
+			while (body[i + j] != ';')
+				j++;
+			header += body.substr(i, j - i);
+			while (body[i] != '\r')
+				i++;
+			while (body[i] == '\r' || body[i] == '\n' )
+				i++;
+			break ;
+		}
+		else if (body.substr(i, 8) == "Status: ") {
+			while (body[i] != '\n')
+				i++;
+			i++;
+		}
+		else
+			break ;
 	}
-	std::cout << std::endl << "test" << newfile << std::endl;
-	return ;
+	header += "\nContent-Length: ";
+	header += std::to_string(body.substr(i, body.size() - i).size());
+	header += "\n\n";
+	header += body.substr(i, body.size() - i);
 }
 
 std::string Reponse::bodyError(std::string oldBody, int code) {
@@ -275,4 +307,10 @@ bool Reponse::CGIcapacity(std::string path, Location location) {
 				return (tmpCGI == location.cgi ? true : false);
 			}
 	return false;
+}
+
+void Reponse::printResponse(){
+	std::cout << "Response--->" << std::endl;
+	std::cout << header << std::endl;
+	std::cout << "------------" << std::endl;
 }

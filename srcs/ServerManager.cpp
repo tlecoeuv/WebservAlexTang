@@ -134,7 +134,6 @@ void	ServerManager::checkClientSocket()
 		if (pfds[i].revents & POLLIN)
 		{
 			client = getClientByFd(pfds[i].fd);
-			
 			client.readRequest();
 			Reponse reponse(client.request, client.server, client.fd);
 			int size = reponse.header.size();
