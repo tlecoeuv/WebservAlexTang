@@ -3,7 +3,7 @@
 /* Constructors and Destructors: */
 
 
-ServerManager::ServerManager()
+ServerManager::ServerManager() : nfds(1), compress_array(false)
 {}
 
 ServerManager::~ServerManager()
@@ -17,11 +17,24 @@ void	ServerManager::initServers(std::vector<Server> configServers)
 
 	for (size_t i = 0; i < servers.size(); i++)
 	{
-		struct pollfd	newpfd;
+		pfds[i].fd = create_server_socket(servers.at(i));
+		pfds[i].events = POLLIN;
+	}
+	nfds = servers.size();
+}
 
-		newpfd.fd = create_server_socket(servers.at(i));
-		newpfd.events = POLLIN;
-		pfds.push_back(newpfd);
+void	ServerManager::compress_pfds(void)
+{
+	compress_array = false;
+	for(int i = 0; i < nfds; i++)
+	{
+		if (pfds[i].fd == -1)
+		{
+			for (int j = i; j < nfds; j++)
+				pfds[j].fd = pfds[j+1].fd;
+			i--;
+			nfds--;
+		}
 	}
 }
 
@@ -31,9 +44,9 @@ void	ServerManager::runServers(void)
 
 	for(;;)
 	{
-		/*if (signal)
-			break;*/
-		poll_count = poll(&pfds[0], pfds.size(), -1);
+		poll_count = poll(pfds, nfds, -1);
+		std::cout << "---------------------------------------------------" << std::endl;
+		std::cout << "nfds: " << nfds << ", servers.size: " << servers.size() << ", clients.size: " << clients.size() << std::endl;
 		if (poll_count == -1)
 		{
             perror("poll");
@@ -41,6 +54,8 @@ void	ServerManager::runServers(void)
         }
 		checkServerSocket();
 		checkClientSocket();
+		if (compress_array)
+			compress_pfds();
 	}
 }
 
@@ -48,21 +63,10 @@ void	ServerManager::runServers(void)
 
 void	ServerManager::add_to_pfds(int newfd)
 {
-	struct pollfd	newpfd;
-
-	newpfd.fd = newfd;
-	newpfd.events = POLLIN;
-	pfds.push_back(newpfd);
-}
-
-void	ServerManager::del_from_pfds(int i)
-{
-	std::vector<struct pollfd>::iterator it;
-
-	it = pfds.begin();
-	while((*it).fd != pfds[i].fd)
-		it++;
-	pfds.erase(it);
+	pfds[nfds].fd = newfd;
+	pfds[nfds].events = POLLIN;
+	pfds[nfds].revents = 0;
+	nfds++;
 }
 
 int		ServerManager::get_index_server(int fd)
@@ -108,6 +112,7 @@ void	ServerManager::checkServerSocket()
 void	ServerManager::handleNewConnexion(int index)
 {
 	Client	client;
+	int		yes = 1;
 
 	client.server = servers[index];
 	if ((client.fd = accept(servers[index].sd, (struct sockaddr *)&client.addr, &client.addr_size)) < 0)
@@ -121,15 +126,17 @@ void	ServerManager::handleNewConnexion(int index)
 		std::cout << "Error in fcntl., client not created." << std::endl;
 		return ;
 	}
+	setsockopt(client.fd, SOL_SOCKET, SO_REUSEADDR, (char *)&yes, sizeof(int));
 	add_to_pfds(client.fd);
 	clients.push_back(client);
+	std::cout << "new connection on fd: " << client.fd << std::endl;
 }
 
 void	ServerManager::checkClientSocket()
 {
 	Client					client;
 
-	for (size_t i = servers.size(); i < pfds.size(); i++)
+	for (int i = servers.size(); i < nfds; i++)
 	{
 		if (pfds[i].revents & POLLIN)
 		{
@@ -141,19 +148,18 @@ void	ServerManager::checkClientSocket()
 				Reponse reponse(client.request, client.server, client.fd);
 				int size = reponse.header.size();
 				client.sendall(pfds[i].fd, reponse.header.c_str(), &size);
+				/*char hello[] = "HTTP/1.1 200 OK\nContent-Type: text/plain\nContent-Length: 12\n\nHello world!";
+				write(pfds[i].fd , hello , strlen(hello));*/
 			}
-			close(pfds[i].fd);
-			del_from_pfds(i);
-			removeClient(client);
-/*			if (client.endConnexion)
+			if(client.endConnexion)
 			{
 				close(pfds[i].fd);
-				del_from_pfds(i);
+				pfds[i].fd = -1;
+				compress_array = true;
 				removeClient(client);
 			}
 			else
 				client.request.clear();
-*/
 		}
 	}
 }
@@ -167,7 +173,6 @@ void	ServerManager::removeClient(Client &client)
 		if ((*it).fd == client.fd)
 			break ;
 	}
-	std::cout << "client on fd: " << (*it).fd << " removed" << std::endl;
 	clients.erase(it);
 }
 

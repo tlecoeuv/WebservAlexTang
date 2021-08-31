@@ -36,11 +36,13 @@ public:
 private:
 
 	std::vector<Server>			servers;
-	std::vector<pollfd>			pfds;
+	struct pollfd				pfds[200];
 	std::list<Client>			clients;
+	int							nfds;
+	bool						compress_array;
 
 	void		add_to_pfds(int newfd);
-	void		del_from_pfds(int i);
+	void		compress_pfds(void);
 	int			is_server_socket(int fd);
 	int			get_index_server(int fd);
 	Client		getClientByFd(int fd);
