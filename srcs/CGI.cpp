@@ -31,7 +31,6 @@ char**  CGI::headerCGI(std::string body, char ** argv) {
 	for (size_t k = 0; k < uri.queryName.size(); ++k) 
 		header.push_back("HTTP_" + uri.queryName.at(k) + "=" + uri.queryValue.at(k));
 	char** tab = (char**)malloc(header.size() * sizeof(char*));
-	//std::cerr << "header" << std::endl;
 	for (size_t i = 0; i < header.size(); i++){
 		//std::cerr << header.at(i) << std::endl;
 		tab[i] = strdup(header.at(i).c_str());
@@ -46,7 +45,7 @@ void		CGI::cgi_body(std::string path) {
 
 	while (std::getline(myfile, ret, '\n')){
 		body += ret;
-		//body += "\n";
+		body += "\n";
 	}
 }
 
@@ -55,7 +54,6 @@ char**	doArgv(std::string path, URI uri){
 	pwd = getcwd(NULL, 0);
 	if (path[0] == '.')
 		path = path.substr(1, path.size() - 1);
-	path = pwd + path;
 	char** argv = (char**)malloc(3 * sizeof(char*));
 	argv[0] = (char*)malloc(path.size() * sizeof(char));
 	strcpy(argv[0], path.c_str());

@@ -41,6 +41,7 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 		return methodError(info, 405);
 	URI uri(request.uri, tmpUri, location.root);
 	if (CGIcapacity(uri.path, location)){
+		std::cout << "cgi on" << std::endl;
 		CGI cgi(location.cgi_path, info["path"], request, clientfd, server, tmpUri, uri);
 		body = methodCGI(cgi, location.cgi_path, uri);
 	}
@@ -129,6 +130,8 @@ void Reponse::methodDelete(std::map<std::string, std::string> info) {
 		methodError(info, 404);
 }
 
+#include <errno.h>
+
 std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	pid_t	pid;
 	char	buffer[65536] = {0};
@@ -139,16 +142,20 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	long	fd[2] = {fileno(filefdin), fileno(filefdout)};
 	std::string cgibody;
 	std::string body;
-
+	
 	char ** argv = doArgv(path, uri);
 	cgi.cgi_body(argv[1]);
+	std::cout << "body ici:" << cgi.body << std::endl;
 	write(fd[0], cgi.body.c_str(), cgi.body.size());
 	lseek(fd[0], 0, SEEK_SET);
 	pid = fork();
 	if (pid == 0) {
 		dup2(fd[0], STDIN_FILENO);
 		dup2(fd[1], STDOUT_FILENO);
+		std::cerr << "argv[0]: " << argv[0] << std::endl;
+		std::cerr << "argv[1]: " << argv[1]  << std::endl;
 		execve(argv[0], argv, cgi.headerCGI(cgi.body, argv));
+		std::cerr << "errno: " << strerror( errno ) << std::endl;
 		exit(0);
 	}
 	else {
@@ -170,6 +177,8 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	for (size_t i = 0; argv[i]; i++)
 		free(argv[i]);
 	free(argv);
+	std::cout << "body:" << std::endl;
+	std::cout << body << std::endl;
 	return body;
 }
 
@@ -292,6 +301,7 @@ std::string Reponse::readFile(std::string file) {
 	while ((res = read(fd, buffer, 256)) > 0)
 		for (size_t j = 0; j < (size_t)res; ++j)
 			result += buffer[j];
+	close(fd);
 	if (res < 0)
 		throw std::out_of_range("Error while reading.");
 	return (result);
@@ -300,6 +310,7 @@ std::string Reponse::readFile(std::string file) {
 bool Reponse::CGIcapacity(std::string path, Location location) {
 	std::string tmpCGI;
 
+	std::cout << "location.cgi_path: " << location.cgi_path << std::endl;
 	if (location.cgi_path.size())
 		for (size_t i = path.size() - 1; i > 0 ; i--)
 			if(path[i] == '.') {
@@ -310,7 +321,7 @@ bool Reponse::CGIcapacity(std::string path, Location location) {
 }
 
 void Reponse::printResponse(){
-	std::cout << "Response--->" << std::endl;
+	std::cout << "\033[32m" << "Response--->" << std::endl;
 	std::cout << header << std::endl;
-	std::cout << "------------" << std::endl;
+	std::cout << "------------" << "\033[0m" << std::endl;
 }
