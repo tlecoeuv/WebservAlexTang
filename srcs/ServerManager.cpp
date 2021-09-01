@@ -111,6 +111,11 @@ void	ServerManager::checkServerSocket()
 
 void	ServerManager::handleNewConnexion(int index)
 {
+	if (nfds > 199)
+	{
+		std::cout << "max number of connexions reached on webserv" << std::endl;
+		return ;
+	}
 	Client	client;
 	int		yes = 1;
 
@@ -194,7 +199,7 @@ int 	ServerManager::create_server_socket(Server &server) // Return a listening s
 	if (bind(server.sd, (struct sockaddr *)&address, sizeof(address)) < 0)
 		throw std::runtime_error("Problem when binding server socket.");
 
-	if (listen(server.sd, 100) < 0)
+	if (listen(server.sd, 200) < 0)
 		throw std::runtime_error("Problem when calling listen on server socket.");
 
 	return (server.sd);

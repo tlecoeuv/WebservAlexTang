@@ -57,8 +57,8 @@ Check list correction:
 
 *| |Siege & stress test:
 
-    -| | Use Siege to run some stress tests.
-    -| | Availability should be above 99.5% for a simple get on an empty page with a siege -b on that page
+    -|V| Use Siege to run some stress tests.
+    -|V| Availability should be above 99.5% for a simple get on an empty page with a siege -b on that page
     -| | Check if there is no memory leak (monitor the process memory usage it should not go up indefinitely)
     -| | Check if there is no hanging connection
     -| | You should be able to use siege indefinitely without restarting the server (look at siege -b)
