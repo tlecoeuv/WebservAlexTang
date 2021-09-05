@@ -1,25 +1,7 @@
                     TO DO LIST:
 
-| |Parsing requete.
-    |V|gérer les erreus. -> bool badRequest?
-    | |taille max uri.
+|V|checker les leaks avec valgrind.
 
-|V|supprimer client quand celui ci ferme la connexion.
-
-|V|remettre à zéro la requete entre chaque requete d'un meme client.
-
-|V|Initialisation serveurs plus propre.
-
-| |Gestion d'erreur
-    |V|dans l'initialisation des serveurs.
-    |V|dans la boucle poll.
-    |V|dans le reading de la requete.
-
-| |gerer le nombre max de clients par serveur.
+|V|gerer le nombre max de clients par serveur.
 | |gerer le nombre max de requetes par client.
 | |temps max par client?
-| |max body size. ---->pas crash lors d'enormes requetes.
-
-| |parsing complet uri?
-
-| |bien comprendre les CGI.

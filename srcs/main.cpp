@@ -7,11 +7,13 @@
 #include "ServerManager.hpp"
 #include "utils.hpp"
 
+bool	g_running = true;
+
 void end(int signal)
 {
 	(void)signal;
-	std::cout << "\b\bWebserver is over" << std::endl;
-	exit(0);
+	std::cout << "\b\b webserver is stopping." << std::endl;
+	g_running = false;
 }
 
 void error(std::exception& ex)

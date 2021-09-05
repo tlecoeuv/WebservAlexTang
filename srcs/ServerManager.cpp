@@ -42,7 +42,7 @@ void	ServerManager::runServers(void)
 {
 	int 					poll_count;
 
-	for(;;)
+	while(g_running)
 	{
 		poll_count = poll(pfds, nfds, -1);
 		std::cout << "---------------------------------------------------" << std::endl;
@@ -50,7 +50,7 @@ void	ServerManager::runServers(void)
 		if (poll_count == -1)
 		{
             perror("poll");
-            exit(1);
+            break ;
         }
 		checkServerSocket();
 		checkClientSocket();
@@ -119,7 +119,9 @@ void	ServerManager::handleNewConnexion(int index)
 	Client	client;
 	int		yes = 1;
 
+	memset(&client.addr, 0, sizeof(client.addr));
 	client.server = servers[index];
+	client.addr_size = sizeof(sockaddr);
 	if ((client.fd = accept(servers[index].sd, (struct sockaddr *)&client.addr, &client.addr_size)) < 0)
 	{
 		std::cout << "Error in accept fonction, client not created." << std::endl;
