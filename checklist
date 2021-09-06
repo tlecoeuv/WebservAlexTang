@@ -36,7 +36,7 @@ Check list correction:
     -|V| POST requests -> should work
     -|V| DELETE requests -> should work
     -|V| UNKNOWN requests -> should not produce any crash
-    -| | For every test the status code must be good
+    -|X| For every test the status code must be good
     -|?| upload some file to the server and get it back
 
 *| | Check with a browser:

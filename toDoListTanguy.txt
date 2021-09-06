@@ -5,3 +5,5 @@
 |V|gerer le nombre max de clients par serveur.
 | |gerer le nombre max de requetes par client.
 | |temps max par client?
+
+| |tcheker les hanging connexion --> bien close toute les fd avant de quitter.

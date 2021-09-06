@@ -45,8 +45,6 @@ void	ServerManager::runServers(void)
 	while(g_running)
 	{
 		poll_count = poll(pfds, nfds, -1);
-		std::cout << "---------------------------------------------------" << std::endl;
-		std::cout << "nfds: " << nfds << ", servers.size: " << servers.size() << ", clients.size: " << clients.size() << std::endl;
 		if (poll_count == -1)
 		{
             perror("poll");
@@ -64,7 +62,7 @@ void	ServerManager::runServers(void)
 void	ServerManager::add_to_pfds(int newfd)
 {
 	pfds[nfds].fd = newfd;
-	pfds[nfds].events = POLLIN;
+	pfds[nfds].events = POLLIN | POLLOUT;
 	pfds[nfds].revents = 0;
 	nfds++;
 }
