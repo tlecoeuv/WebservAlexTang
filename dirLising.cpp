@@ -1,6 +1,9 @@
 # include <iostream>
 # include <dirent.h>
 
+//lien ou j'ai trouve le code de base:
+//https://www.codespeedy.com/listing-all-files-and-sub-directories-within-a-directory-in-cpp/
+
 std::string		directory_contents( char * directory_path )
 {
 	DIR				*dh;
