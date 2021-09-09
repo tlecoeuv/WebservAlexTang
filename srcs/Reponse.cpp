@@ -365,9 +365,11 @@ std::string		Reponse::directory_contents(const char *directory_path, std::string
 	while ((contents = readdir(dh)) != NULL) {
 		std::string name = contents->d_name;
 		std::string line;
+		std::cout << "name: " << name << std::endl;
+		if (name == "..")
+			continue ;
 		line = "<a href=\"." + tmpUri + name + "\">" + name + "</a><br />";
 		finalResult += line;
-		std::cout << "line: " << line << std::endl;
 	}
 	closedir(dh);
 	finalResult += "</body>\n</html>\n";
