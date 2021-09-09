@@ -73,7 +73,7 @@ void Reponse::methodGet(std::map<std::string, std::string> info, Request request
 	(void)request;
 
 	info["Content-Type"] = getMIMEType(info["path"]);
-	if (body.size() == 0) {
+	if (autoindex == 1 || body.size() == 0) {
 		try {
 			if (autoindex == 0)
 				body = readFile(info["path"]);
@@ -349,6 +349,8 @@ std::string		Reponse::directory_contents(const char *directory_path, std::string
 	std::string		finalResult;
 
 	dh = opendir(directory_path);
+	if (tmpUri != "/")
+		tmpUri += "/";
 	std::cout << "directory_path: " << directory_path << std::endl;
 	if (!dh){
 		return (NULL);
