@@ -16,8 +16,7 @@ char**  CGI::headerCGI(std::string body, char ** argv) {
 
 	header.push_back("GATEWAY_INTERFACE=CGI/1.1");
 	header.push_back("PATH_TRANSLATED=index.php");
-	//header.push_back("QUERY_STRING=" + uri.query);
-	header.push_back("QUERY_STRING=");
+	header.push_back("QUERY_STRING=" + uri.query);
 	header.push_back("REQUEST_METHOD=" + request.method);
 	header.push_back("CONTENT_LENGTH=" + std::to_string(body.length()));
 	header.push_back("CONTENT_TYPE=" + getMIMEType(uri.path));
@@ -33,7 +32,7 @@ char**  CGI::headerCGI(std::string body, char ** argv) {
 		header.push_back("HTTP_" + uri.queryName.at(k) + "=" + uri.queryValue.at(k));
 	char** tab = (char**)malloc(header.size() * sizeof(char*));
 	for (size_t i = 0; i < header.size(); i++){
-		//std::cerr << header.at(i) << std::endl;
+		std::cerr << header.at(i) << "_" <<std::endl;
 		tab[i] = strdup(header.at(i).c_str());
 	}
 	tab[header.size()] = NULL;

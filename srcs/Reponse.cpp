@@ -83,7 +83,7 @@ void Reponse::methodGet(std::map<std::string, std::string> info, Request request
 
 		}
 		catch (const std::exception &e){
-			methodError(info, 403);
+			methodError(info, 404);
 		}
 		header += "Content-Type: ";
 		header += info["Content-Type"];
