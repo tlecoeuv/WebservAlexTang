@@ -13,6 +13,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <dirent.h>
 
 /* Includes: */
 #include "Request.hpp"
@@ -27,6 +28,7 @@ std::string getMIMEType(std::string filename);
 class 	Reponse {
     public:
         std::string header;
+		bool autoindex;
 		Request request;
 		std::map<std::string, Location> locations;
 		int clientfd;
@@ -36,7 +38,7 @@ class 	Reponse {
         Reponse(){};
         Reponse(Request r, Server s, int cfd);
 		void makeReponse(Request request, Location location, std::string tmpUri);
-        void methodGet(std::map<std::string, std::string> info, Request request, std::string body);
+        void methodGet(std::map<std::string, std::string> info, Request request, std::string body, std::string tmpUri);
 		void methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body);
         void methodDelete(std::map<std::string, std::string> info);
 		std::string methodCGI(CGI cgi, std::string path, URI uri);
@@ -48,6 +50,7 @@ class 	Reponse {
         std::string readFile(std::string file);
 		void printResponse();
 		bool CGIcapacity(std::string path, Location location);
+		std::string		directory_contents(const char *directory_path, std::string tmpUri);
 };
 
 #endif

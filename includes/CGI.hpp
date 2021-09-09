@@ -33,8 +33,6 @@ class CGI {
 	private:
 
 };
-
-void freeCGI(char **tab);
 char**	doArgv(std::string path, URI uri);
 
 #endif
