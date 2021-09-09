@@ -7,7 +7,6 @@ Reponse::Reponse(Request r, Server s, int cfd): request(r), locations(s.location
 	if (tmpUri.size() > 1 && tmpUri[tmpUri.size() - 1] == '/')
 			tmpUri.pop_back();
 	while (tmpUri.size()) {
-		//std::cout << "tmpUri: " << tmpUri << std::endl;
 		for (std::map<std::string, Location>::iterator it = locations.begin() ; it != locations.end(); ++it)
 			if (tmpUri == it->first){
 				makeReponse(request, it->second, tmpUri);
@@ -144,8 +143,6 @@ void Reponse::methodDelete(std::map<std::string, std::string> info) {
 		methodError(info, 404);
 }
 
-#include <errno.h>
-
 std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	pid_t	pid;
 	char	buffer[65536] = {0};
@@ -159,17 +156,13 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	
 	char ** argv = doArgv(path, uri);
 	cgi.cgi_body(argv[1]);
-	std::cout << "body ici:" << cgi.body << std::endl;
 	write(fd[0], cgi.body.c_str(), cgi.body.size());
 	lseek(fd[0], 0, SEEK_SET);
 	pid = fork();
 	if (pid == 0) {
 		dup2(fd[0], STDIN_FILENO);
 		dup2(fd[1], STDOUT_FILENO);
-		std::cerr << "argv[0]: " << argv[0] << std::endl;
-		std::cerr << "argv[1]: " << argv[1]  << std::endl;
 		execve(argv[0], argv, cgi.headerCGI(cgi.body, argv));
-		std::cerr << "errno: " << strerror( errno ) << std::endl;
 		exit(0);
 	}
 	else {
@@ -191,16 +184,14 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	for (size_t i = 0; argv[i]; i++)
 		free(argv[i]);
 	free(argv);
-	std::cout << "body:" << std::endl;
-	std::cout << body << std::endl;
 	return body;
 }
 
 void Reponse::readBodyCGI(std::string body){
 	size_t i = 0;
-	//std::cout << "test: \n" << body << std::endl;
+
 	for(; i < body.size();) {
-		if (body.substr(i, 14) == "Content-Type: ") {
+		if (body.substr(i, 14) == "Content-Type: " || body.substr(i, 14) == "Content-type: ") {
 			int j = 0;
 			while (body[i + j] != ';')
 				j++;
