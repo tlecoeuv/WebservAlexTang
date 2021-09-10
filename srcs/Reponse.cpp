@@ -53,7 +53,7 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 		body = methodCGI(cgi, location.cgi_path, uri);
 	}
 	if (request.method == "GET")
-		methodGet(info, request, body, tmpUri);
+		methodGet(info, body, tmpUri, location.max_body);
 	else if (request.method == "DELETE")
 		methodDelete(info);
 	else if (request.method == "POST")
@@ -68,8 +68,8 @@ int Reponse::acceptedMethod(std::string requestMethod, std::vector<std::string> 
 	return 0;
 }
 
-void Reponse::methodGet(std::map<std::string, std::string> info, Request request, std::string body, std::string tmpUri){ 
-	(void)request;
+void Reponse::methodGet(std::map<std::string, std::string> info, std::string body, std::string tmpUri, std::string max_body){ 
+	int bodysize;
 
 	info["Content-Type"] = getMIMEType(info["path"]);
 	if (autoindex == 1 || body.size() == 0) {
@@ -91,21 +91,25 @@ void Reponse::methodGet(std::map<std::string, std::string> info, Request request
 		header += std::to_string(body.size());
 		header += "\n\n";
 		header += body;
+		bodysize = body.size();
 	}
 	else
-		readBodyCGI(body);
+		bodysize = readBodyCGI(body);
+	if (max_body.size() && bodysize > atoi(max_body.c_str()))
+		methodError(info, 413);
 	printResponse();
 }
 
 void Reponse::methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body){
 	struct stat buf;
 
-	if (max_body.size() && (int)request.body.size() > atoi(max_body.c_str()))
-	{
+	if (max_body.size() && (int)request.body.size() > atoi(max_body.c_str())) {
 		methodError(info, 413);
 		return ;
 	}
 	std::cout << "request.body: " << request.body << std::endl;
+	//if (body.size() == 1)
+	//	readBodyCGI(body);
 	if ((stat(info["path"].c_str(), &buf)) == 0){
 		if (S_ISREG(buf.st_mode)){
 			int fd = open(info["path"].c_str(), O_WRONLY | O_TRUNC, 0644);
@@ -187,7 +191,7 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	return body;
 }
 
-void Reponse::readBodyCGI(std::string body){
+int Reponse::readBodyCGI(std::string body){
 	size_t i = 0;
 
 	for(; i < body.size();) {
@@ -214,6 +218,7 @@ void Reponse::readBodyCGI(std::string body){
 	header += std::to_string(body.substr(i, body.size() - i).size());
 	header += "\n\n";
 	header += body.substr(i, body.size() - i);
+	return (int)body.size();
 }
 
 std::string Reponse::bodyError(std::string oldBody, int code) {

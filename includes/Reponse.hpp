@@ -38,11 +38,11 @@ class 	Reponse {
         Reponse(){};
         Reponse(Request r, Server s, int cfd);
 		void makeReponse(Request request, Location location, std::string tmpUri);
-        void methodGet(std::map<std::string, std::string> info, Request request, std::string body, std::string tmpUri);
+        void methodGet(std::map<std::string, std::string> info, std::string body, std::string tmpUri, std::string max_body);
 		void methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body);
         void methodDelete(std::map<std::string, std::string> info);
 		std::string methodCGI(CGI cgi, std::string path, URI uri);
-		void readBodyCGI(std::string body);
+		int readBodyCGI(std::string body);
         void methodError(std::map<std::string, std::string> info, int code);
 		int acceptedMethod(std::string requestMethod, std::vector<std::string> locationsMethod);
 		std::string bodyError(std::string oldBody, int code);
