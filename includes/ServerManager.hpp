@@ -1,12 +1,7 @@
 #ifndef SERVERMANAGER_HPP
 # define SERVERMANAGER_HPP
 
-#include "Server.hpp"
-#include "Location.hpp"
-#include "Request.hpp"
-#include "Reponse.hpp"
-#include "Client.hpp"
-
+/* Includes: */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,10 +13,15 @@
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <poll.h>
-
 #include <iostream>
 #include <list>
 
+/*Library: */
+#include "Server.hpp"
+#include "Location.hpp"
+#include "Request.hpp"
+#include "Reponse.hpp"
+#include "Client.hpp"
 
 class 	ServerManager
 {

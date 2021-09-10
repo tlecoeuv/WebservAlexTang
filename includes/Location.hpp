@@ -5,16 +5,14 @@
 #include <vector>
 #include <string>
 
-class Location {
-    public:
-        std::vector<std::string> method;
-        std::string root;
-        std::string index;
-        bool auto_index;
-        std::string cgi;
-        std::string cgi_path;
-        std::string max_body;
-        std::string auth;
+struct Location {
+	std::vector<std::string>	method;
+	std::string					root;
+	std::string					index;
+	bool						auto_index;
+	std::string					cgi;
+	std::string					cgi_path;
+	std::string					max_body;
 };
 
 #endif

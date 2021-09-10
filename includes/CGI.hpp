@@ -18,21 +18,22 @@ std::string getMIMEType(std::string filename);
 
 class CGI {
 	public:
-		Server server;
-		std::string cgiPath;
-		std::string ressourcePath;
-		std::string body;
-		Request request;
-		int clientfd;
-		std::string nameLocation;
-		URI uri;
+		Server			server;
+		std::string		cgiPath;
+		std::string		ressourcePath;
+		std::string		body;
+		Request			request;
+		int				clientfd;
+		std::string		nameLocation;
+		URI				uri;
 
 		CGI(std::string cp, std::string rp, Request req, int cfd, Server s, std::string nl, URI u);
-		void cgi_body(std::string path);
-		char** headerCGI(std::string body, char ** argv);
+		void			cgi_body(std::string path);
+		char**			headerCGI(std::string body, char ** argv);
 	private:
 
 };
+
 char**	doArgv(std::string path, URI uri);
 
 #endif

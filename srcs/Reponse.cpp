@@ -197,7 +197,7 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 		free(argv[i]);
 	free(argv);
 
-	std::cout << "body: " << body << std::endl;
+	//std::cout << "body: " << body << std::endl;
 	return body;
 }
 
@@ -361,22 +361,21 @@ std::string		Reponse::directory_contents(const char *directory_path, std::string
 	if (!dh){
 		return (NULL);
 	}
-	finalResult += "<head>\n <style>\n @import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');";
-	finalResult += "html {\nfont-family: 'Quicksand';\n}\nbody {\ntext-align:left;\n";
-	finalResult += "margin-top: 2%;\n}\nh1, h2 {\nfont-weight: 400;\nmargin: 0;\n}\n";
-	finalResult += "h1 > span {\nfont-weight: 900;\n}\n</style>\n";
-	finalResult += "<meta charset=\"UTF-8\">\n";
-	finalResult += "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
-	finalResult += "<title>WebServ - Auto--Index</title>\n";
+	finalResult += "<head>\n	<style>\n		@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');\n";
+	finalResult += "		html {\n			font-family: 'Quicksand';\n		}\n		body {\n			text-align:left;\n";
+	finalResult += "			margin-top: 2%;\n		}\n		h1, h2 {\n			font-weight: 400;\n			margin: 0;\n		}\n";
+	finalResult += "		h1 > span {\n			font-weight: 900;\n			}\n			a {\n			padding-left: 10;		}\n		</style>\n";
+	finalResult += "	<meta charset=\"UTF-8\">\n";
+	finalResult += "	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
+	finalResult += "	<title>WebServ - Auto--Index</title>\n";
 	finalResult += "</head>\n<body>\n";
-	finalResult += "<h1>	Auto-Index <br />_______________<br /><br /></h1>";
+	finalResult += "	<h1>	Auto-Index <br />_______________<br /><br /></h1>";
 	while ((contents = readdir(dh)) != NULL) {
 		std::string name = contents->d_name;
 		std::string line;
-		std::cout << "name: " << name << std::endl;
 		if (name == "..")
 			continue ;
-		line = "<a href=\"." + tmpUri + name + "\">" + name + "</a><br />";
+		line = "	<a href=\"." + tmpUri + name + "\">" + name + "</a><br />";
 		finalResult += line;
 	}
 	closedir(dh);

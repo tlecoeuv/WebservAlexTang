@@ -19,18 +19,18 @@
 
 class URI {
 	public:
-		std::string scheme;
-		std::string authority;
-		std::string path;
-		std::string query;
-		std::vector<std::string> queryName;
-		std::vector<std::string> queryValue;
-		std::string fragment;
+		std::string					scheme;
+		std::string					authority;
+		std::string					path;
+		std::string					query;
+		std::vector<std::string>	queryName;
+		std::vector<std::string>	queryValue;
+		std::string					fragment;
 	
 	public:
 		URI() {};
 		URI(std::string uri, std::string location, std::string root);
-		void parseQuery();
+		void						parseQuery();
 };
 
 #endif

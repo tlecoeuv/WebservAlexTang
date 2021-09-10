@@ -18,7 +18,7 @@ void end(int signal)
 
 void error(std::exception& ex)
 {
-	std::cerr << "Error " << ex.what() << std::endl;
+	std::cerr << "\033[31mError: " << ex.what() << "\033[0m" << std::endl;
 }
 
 int main(int argc, char **argv)

@@ -30,7 +30,7 @@ char**  CGI::headerCGI(std::string body, char ** argv) {
 	//header.push_back("SERVER_SOFTWARE=webserv/1.0");
 	for (size_t k = 0; k < uri.queryName.size(); ++k) 
 		header.push_back("HTTP_" + uri.queryName.at(k) + "=" + uri.queryValue.at(k));
-	char** tab = (char**)malloc(header.size() * sizeof(char*));
+	char** tab = (char**)malloc((header.size() + 1) * sizeof(char*));
 	for (size_t i = 0; i < header.size(); i++){
 		//std::cerr << header.at(i) << "_" <<std::endl;
 		tab[i] = strdup(header.at(i).c_str());
@@ -56,10 +56,10 @@ char**	doArgv(std::string path, URI uri){
 		path = path.substr(1, path.size() - 1);
 	char** argv = (char**)malloc(3 * sizeof(char*));
 	path = pwd + path;
-	argv[0] = (char*)malloc(path.size() * sizeof(char));
+	argv[0] = (char*)malloc((path.size() + 1)* sizeof(char));
 	strcpy(argv[0], path.c_str());
 	uri.path = pwd + uri.path;
-	argv[1] = (char*)malloc((uri.path.size()) * sizeof(char));
+	argv[1] = (char*)malloc((uri.path.size() + 1) * sizeof(char));
 	strcpy(argv[1], uri.path.c_str());
 	argv[2] = 0;
 	return (argv);
