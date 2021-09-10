@@ -57,7 +57,7 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 	else if (request.method == "DELETE")
 		methodDelete(info);
 	else if (request.method == "POST")
-		methodPOST(info, request, location.max_body);
+		methodPOST(info, request, location.max_body, body);
 }
 
 int Reponse::acceptedMethod(std::string requestMethod, std::vector<std::string> locationsMethod){
@@ -94,22 +94,26 @@ void Reponse::methodGet(std::map<std::string, std::string> info, std::string bod
 		bodysize = body.size();
 	}
 	else
-		bodysize = readBodyCGI(body);
+		bodysize = readBodyCGI(body).size();
 	if (max_body.size() && bodysize > atoi(max_body.c_str()))
 		methodError(info, 413);
 	printResponse();
 }
 
-void Reponse::methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body){
+void Reponse::methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body, std::string body){
 	struct stat buf;
 
 	if (max_body.size() && (int)request.body.size() > atoi(max_body.c_str())) {
 		methodError(info, 413);
 		return ;
 	}
+	if (body.size() != 0)
+		request.body = readBodyCGI(body);
+	if (max_body.size() && (int)request.body.size() > atoi(max_body.c_str())){
+		methodError(info, 413);
+		return ;
+	}
 	std::cout << "request.body: " << request.body << std::endl;
-	//if (body.size() == 1)
-	//	readBodyCGI(body);
 	if ((stat(info["path"].c_str(), &buf)) == 0){
 		if (S_ISREG(buf.st_mode)){
 			int fd = open(info["path"].c_str(), O_WRONLY | O_TRUNC, 0644);
@@ -159,7 +163,11 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	std::string body;
 	
 	char ** argv = doArgv(path, uri);
-	cgi.cgi_body(argv[1]);
+	if (request.body.size()){
+		cgi.body = request.body;
+	}
+	else
+		cgi.cgi_body(argv[1]);
 	write(fd[0], cgi.body.c_str(), cgi.body.size());
 	lseek(fd[0], 0, SEEK_SET);
 	pid = fork();
@@ -188,10 +196,12 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	for (size_t i = 0; argv[i]; i++)
 		free(argv[i]);
 	free(argv);
+
+	std::cout << "body: " << body << std::endl;
 	return body;
 }
 
-int Reponse::readBodyCGI(std::string body){
+std::string Reponse::readBodyCGI(std::string body){
 	size_t i = 0;
 
 	for(; i < body.size();) {
@@ -218,7 +228,7 @@ int Reponse::readBodyCGI(std::string body){
 	header += std::to_string(body.substr(i, body.size() - i).size());
 	header += "\n\n";
 	header += body.substr(i, body.size() - i);
-	return (int)body.size();
+	return body.substr(i, body.size() - i);
 }
 
 std::string Reponse::bodyError(std::string oldBody, int code) {

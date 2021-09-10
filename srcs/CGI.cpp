@@ -32,7 +32,7 @@ char**  CGI::headerCGI(std::string body, char ** argv) {
 		header.push_back("HTTP_" + uri.queryName.at(k) + "=" + uri.queryValue.at(k));
 	char** tab = (char**)malloc(header.size() * sizeof(char*));
 	for (size_t i = 0; i < header.size(); i++){
-		std::cerr << header.at(i) << "_" <<std::endl;
+		//std::cerr << header.at(i) << "_" <<std::endl;
 		tab[i] = strdup(header.at(i).c_str());
 	}
 	tab[header.size()] = NULL;
