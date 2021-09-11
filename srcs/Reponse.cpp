@@ -28,6 +28,7 @@ Reponse::Reponse(Request r, Server s, int cfd): request(r), locations(s.location
 void Reponse::makeReponse(Request request, Location location, std::string tmpUri){
 	std::map<std::string, std::string> info;
 	std::string body;
+	struct stat buf;
 
 	info["Content-Type"] = "text/html";
 	header = "HTTP/1.1 200 OK\n";
@@ -44,6 +45,11 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 	}
 	else
 		info["path"] = location.root + "/" + request.uri.substr(tmpUri.size(), request.uri.size());
+	if (!autoindex && (stat(info["path"].c_str(), &buf)) == 0){
+		if (location.auto_index && S_ISDIR(buf.st_mode)){
+			autoindex = 1;
+		}
+	}
 	if (!acceptedMethod(request.method, location.method))
 		return methodError(info, 405);
 	URI uri(request.uri, tmpUri, location.root);
@@ -53,7 +59,7 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 		body = methodCGI(cgi, location.cgi_path, uri);
 	}
 	if (request.method == "GET")
-		methodGet(info, body, tmpUri, location.max_body);
+		methodGet(info, body, location.max_body, request.uri);
 	else if (request.method == "DELETE")
 		methodDelete(info);
 	else if (request.method == "POST")
@@ -68,7 +74,7 @@ int Reponse::acceptedMethod(std::string requestMethod, std::vector<std::string> 
 	return 0;
 }
 
-void Reponse::methodGet(std::map<std::string, std::string> info, std::string body, std::string tmpUri, std::string max_body){ 
+void Reponse::methodGet(std::map<std::string, std::string> info, std::string body, std::string max_body, std::string uri){ 
 	int bodysize;
 
 	info["Content-Type"] = getMIMEType(info["path"]);
@@ -77,12 +83,13 @@ void Reponse::methodGet(std::map<std::string, std::string> info, std::string bod
 			if (autoindex == 0)
 				body = readFile(info["path"]);
 			else{
-				body = directory_contents(info["path"].c_str(), tmpUri);
+				body = directory_contents(info["path"].c_str(), uri);
 				info["Content-Type"] = "text/html";
 			}
 
 		}
 		catch (const std::exception &e){
+			std::cerr << "\033[31mError: " << e.what() << "\033[0m" << std::endl;
 			methodError(info, 404);
 		}
 		header += "Content-Type: ";
@@ -331,8 +338,6 @@ std::string Reponse::readFile(std::string file) {
 bool Reponse::CGIcapacity(std::string path, Location location) {
 	std::string tmpCGI;
 
-	std::cout << "location.cgi_path: " << location.cgi_path << std::endl;
-	std::cout << "path: " << path << std::endl;
 	if (location.cgi_path.size())
 		for (size_t i = path.size() - 1; i > 0 ; i--)
 			if(path[i] == '.') {
@@ -353,29 +358,39 @@ std::string		Reponse::directory_contents(const char *directory_path, std::string
 	struct dirent	*contents;
 	std::string		pathString(directory_path);
 	std::string		finalResult;
+	struct stat buf;
 
 	dh = opendir(directory_path);
 	if (tmpUri != "/")
 		tmpUri += "/";
-	std::cout << "directory_path: " << directory_path << std::endl;
+	//std::cout << "directory_path: " << directory_path << std::endl;
 	if (!dh){
 		return (NULL);
 	}
 	finalResult += "<head>\n	<style>\n		@import url('https://fonts.googleapis.com/css2?family=Quicksand&display=swap');\n";
 	finalResult += "		html {\n			font-family: 'Quicksand';\n		}\n		body {\n			text-align:left;\n";
 	finalResult += "			margin-top: 2%;\n		}\n		h1, h2 {\n			font-weight: 400;\n			margin: 0;\n		}\n";
-	finalResult += "		h1 > span {\n			font-weight: 900;\n			}\n			a {\n			padding-left: 10;		}\n		</style>\n";
+	finalResult += "		h1 > span {\n			font-weight: 900;\n		}\n		a {\n			padding-left: 10;\n		}\n";
+	finalResult += "		h1 {\n			margin-bottom: -30;\n		}\n	</style>\n";
 	finalResult += "	<meta charset=\"UTF-8\">\n";
 	finalResult += "	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n";
 	finalResult += "	<title>WebServ - Auto--Index</title>\n";
 	finalResult += "</head>\n<body>\n";
-	finalResult += "	<h1>	Auto-Index <br />_______________<br /><br /></h1>";
+	finalResult += "	<h1>	Auto-Index</h1> <h1>_______________<br /><br /></h1>\n";
+	finalResult += "	<h2>Index of " + tmpUri + "</h2>\n";
 	while ((contents = readdir(dh)) != NULL) {
 		std::string name = contents->d_name;
 		std::string line;
 		if (name == "..")
+			line = "	<a href=\"." + tmpUri + name + "\">" + "Parent Directory/" + "</a><br />\n";
+		else if (name == ".")
 			continue ;
-		line = "	<a href=\"." + tmpUri + name + "\">" + name + "</a><br />";
+		else {
+			if ((stat((std::string(directory_path) + "/" + name).c_str(), &buf)) == 0 && S_ISDIR(buf.st_mode))
+				line = "	<a href=\"." + tmpUri + name + "\">" + name + "/</a><br />\n";
+			else
+				line = "	<a href=\"." + tmpUri + name + "\">" + name + "</a><br />\n";
+		}
 		finalResult += line;
 	}
 	closedir(dh);
