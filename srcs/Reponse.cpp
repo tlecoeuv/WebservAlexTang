@@ -2,6 +2,7 @@
 
 Reponse::Reponse(Request r, Server s, int cfd): request(r), locations(s.locations), clientfd(cfd), server(s) {
 	std::string tmpUri = request.uri;
+	std::cout << tmpUri << std::endl;
 	autoindex = 0;
 	if (tmpUri.size() > 1 && tmpUri[tmpUri.size() - 1] == '/')
 			tmpUri.pop_back();
@@ -28,13 +29,14 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 	std::map<std::string, std::string> info;
 	std::string body;
 	struct stat buf;
+
 	if (location.redirection.first)
 		return getRedirection(location);
-	std::cout << "test: "<< header << std::endl;
 	info["Content-Type"] = "text/html";
 	header = "HTTP/1.1 200 OK\n";
 	if (request.uri.size() > 2 && request.uri[request.uri.size() - 1] == '/')
 		request.uri.pop_back();
+	URI uri(request.uri, tmpUri, location.root);
 	if (tmpUri == request.uri) {
 		info["path"] = location.root;
 		if (location.auto_index)
@@ -44,8 +46,10 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 			info["path"] += location.index;
 		}
 	}
-	else
+	else{
 		info["path"] = location.root + "/" + request.uri.substr(tmpUri.size(), request.uri.size());
+		info["path"] =  info["path"].substr(0, info["path"].find_first_of('?'));
+	}
 	if (!autoindex && (stat(info["path"].c_str(), &buf)) == 0){
 		if (location.auto_index && S_ISDIR(buf.st_mode)){
 			autoindex = 1;
@@ -53,9 +57,7 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 	}
 	if (!acceptedMethod(request.method, location.method))
 		return methodError(info, 405);
-	URI uri(request.uri, tmpUri, location.root);
 	if (CGIcapacity(uri.path, location)){
-		std::cout << "cgi on" << std::endl;
 		CGI cgi(location.cgi_path, info["path"], request, clientfd, server, tmpUri, uri);
 		body = methodCGI(cgi, location.cgi_path, uri);
 	}
@@ -83,7 +85,7 @@ void Reponse::methodGet(std::map<std::string, std::string> info, std::string bod
 		try {
 			if (autoindex == 0)
 				body = readFile(info["path"]);
-			else{
+			else {
 				body = directory_contents(info["path"].c_str(), uri);
 				info["Content-Type"] = "text/html";
 			}
@@ -204,8 +206,6 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	for (size_t i = 0; argv[i]; i++)
 		free(argv[i]);
 	free(argv);
-
-	//std::cout << "body: " << body << std::endl;
 	return body;
 }
 
@@ -362,10 +362,11 @@ std::string		Reponse::directory_contents(const char *directory_path, std::string
 	std::string		finalResult;
 	struct stat buf;
 
+	tmpUri =  tmpUri.substr(0, tmpUri.find_first_of('?'));
+	std::cout << "tmpUri 2: " << tmpUri << std::endl;
 	dh = opendir(directory_path);
 	if (tmpUri != "/")
 		tmpUri += "/";
-	//std::cout << "directory_path: " << directory_path << std::endl;
 	if (!dh){
 		return (NULL);
 	}

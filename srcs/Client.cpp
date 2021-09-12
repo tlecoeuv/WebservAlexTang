@@ -99,6 +99,10 @@ int    Client::parseFirstLine(std::string line)
 
 	request.method = words[0];
 	request.uri = words[1];
+	for (size_t i = 1; i < request.uri.size(); ++i) {
+		while (i < request.uri.size() && request.uri.at(i) == '/' && request.uri.at(i - 1) == '/')
+			request.uri.erase(i, 1);
+	}
 	request.protocol = words[2];
 	return (0);
 }

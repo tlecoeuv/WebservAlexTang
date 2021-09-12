@@ -14,6 +14,7 @@ URI::URI(std::string uri, std::string location, std::string root){
 				path = root + "/" + path.substr(location.size(), path.size() - location.size()):
 				path = root + path.substr(location.size(), path.size() - location.size());
 			i = j + 1;
+			parsePath();
 		}
 		if (path.size() && query.size() == 0 && (uri.at(j) == '#' || j + 1 == uri.size())) {
 			query = uri.substr(i, j - i + (uri.at(j) == '#'? 0 : 1));
@@ -23,8 +24,8 @@ URI::URI(std::string uri, std::string location, std::string root){
 			break;
 		}
 	}
-	//std::cout << "Path: " << path << std::endl;
-	//std::cout << "Query: " << query << std::endl;
+	std::cout << "Path: " << path << std::endl;
+	std::cout << "Query: " << query << std::endl;
 	//std::cout << "Fragment: " << fragment << std::endl;
 }
 
@@ -49,4 +50,12 @@ void URI::parseQuery() {
 	//  	std::cout << queryValue.at(i);
   	//  	std::cout << '\n';
 	// }
+}
+
+void URI::parsePath() {
+	std::cout << "Path: " << path << std::endl;
+	for (size_t i = 1; i < path.size(); i++) {
+		if (path.at(i) == '/' && path.at(i - 1) == '/')
+			path.erase(i, 1);
+	}
 }

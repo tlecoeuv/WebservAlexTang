@@ -31,6 +31,7 @@ class URI {
 		URI() {};
 		URI(std::string uri, std::string location, std::string root);
 		void						parseQuery();
+		void 						parsePath();
 };
 
 #endif
