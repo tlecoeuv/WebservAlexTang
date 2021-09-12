@@ -48,6 +48,7 @@ class 	Reponse {
 		int			acceptedMethod(std::string requestMethod, std::vector<std::string> locationsMethod);
 		std::string	bodyError(std::string oldBody, int code);
 		std::string	getMessage(size_t code);
+		void		getRedirection(Location location);
 		std::string	readFile(std::string file);
 		void		printResponse();
 		bool		CGIcapacity(std::string path, Location location);

@@ -12,7 +12,7 @@ bool	g_running = true;
 void end(int signal)
 {
 	(void)signal;
-	std::cout << "\b\b webserver is stopping." << std::endl;
+	std::cout << "\b\bWebserver is stopping." << std::endl;
 	g_running = false;
 }
 

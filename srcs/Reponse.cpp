@@ -3,7 +3,6 @@
 Reponse::Reponse(Request r, Server s, int cfd): request(r), locations(s.locations), clientfd(cfd), server(s) {
 	std::string tmpUri = request.uri;
 	autoindex = 0;
-
 	if (tmpUri.size() > 1 && tmpUri[tmpUri.size() - 1] == '/')
 			tmpUri.pop_back();
 	while (tmpUri.size()) {
@@ -18,7 +17,7 @@ Reponse::Reponse(Request r, Server s, int cfd): request(r), locations(s.location
 		if (tmpUri.size() > 1)
 			tmpUri.pop_back();
 	}
-	std::cout << "No location" << std::endl;
+	std::cerr << "No location" << std::endl;
 	std::map<std::string, std::string> info;
 
 	info["Content-Type"] = "text/html";
@@ -29,7 +28,9 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 	std::map<std::string, std::string> info;
 	std::string body;
 	struct stat buf;
-
+	if (location.redirection.first)
+		return getRedirection(location);
+	std::cout << "test: "<< header << std::endl;
 	info["Content-Type"] = "text/html";
 	header = "HTTP/1.1 200 OK\n";
 	if (request.uri.size() > 2 && request.uri[request.uri.size() - 1] == '/')
@@ -289,6 +290,7 @@ std::string Reponse::getMessage(size_t code) {
 	message[304] = "Not Modified";
 	message[305] = "Use Proxy";
 	message[307] = "Temporary Redirect";
+	message[308] = "Permanent Redirect";
 	message[400] = "Bad Request";
 	message[401] = "Unauthorized";
 	message[402] = "Payment Required";
@@ -396,4 +398,34 @@ std::string		Reponse::directory_contents(const char *directory_path, std::string
 	closedir(dh);
 	finalResult += "</body>\n</html>\n";
 	return (finalResult);
+}
+
+void Reponse::getRedirection(Location location){
+	std::cout << "test: "<< header << std::endl;
+	if (location.redirection.first == 301 || location.redirection.first == 302 || location.redirection.first == 303 ||
+		location.redirection.first == 307 || location.redirection.first == 308){
+		header += "HTTP/1.1 " + std::to_string(location.redirection.first);
+		header += " " + getMessage(location.redirection.first) + "\n";
+		header += "Location: " + location.redirection.second + "\n";
+		header += "Content-Type: text/html; charset=UTF-8\n\n";
+		header += "<HTML>\n<HEAD>\n	<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">\n";
+		header += "	<TITLE>Moved</TITLE>\n</HEAD>\n<BODY>\n";
+		header += "	<H1>" + std::to_string(location.redirection.first) + " Moved</H1>\n";
+		header += "	You're going elsewhere\n";
+		header += "	<A HREF=\"" + location.redirection.second + "\">here</A>.\n";
+		header += "</BODY>\n</HTML>\n";
+	}
+	else if (location.redirection.second.size() == 0){
+		std::map<std::string, std::string> info;
+		info["Content-Type"] = "text/html";
+		methodError(info, location.redirection.first);
+	}
+	else {
+		header += "HTTP/1.1 " + std::to_string(location.redirection.first);
+		header += " " + getMessage(location.redirection.first) + "\n";
+		header += "Content-Type: text/html; charset=UTF-8\n";
+		header += "Content-Length: " +  std::to_string(location.redirection.second.size()) + "\n\n";
+		header += location.redirection.second;
+	}
+	printResponse();
 }

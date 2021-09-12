@@ -13,6 +13,7 @@ struct Location {
 	std::string					cgi;
 	std::string					cgi_path;
 	std::string					max_body;
+	std::pair<int, std::string>	redirection;
 };
 
 #endif

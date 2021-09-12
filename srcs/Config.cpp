@@ -83,6 +83,7 @@ void Config::parametre(std::string conf){
 int Config::configLocation(int index, std::vector<std::string> readParam, Server &newServer){
 	Location newLocation;
 
+	newLocation.redirection.first = 0;
 	std::string path;
 	if (!readParam.at(index).compare(9, 2, "/ ")){
 		path = "/";
@@ -140,6 +141,38 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 			else
 				throw std::invalid_argument("No max_body");
 		}
+		else if ((!readParam.at(index).compare(0, 7, "return "))){
+			if (readParam.at(index).size() > 6){
+				size_t i = 7;
+				for (;i < readParam.at(index).size() && readParam.at(index).at(i) != ' '; i++)
+					;
+				if (readParam.at(index).substr(7, i - 7).find_first_not_of("0123456789") != std::string::npos)
+					throw std::invalid_argument("Redirection code has invalid value");
+				newLocation.redirection.first = std::stoi(readParam.at(index).substr(7, i - 7));
+				if (i == readParam.at(index).size() && (newLocation.redirection.first == 301 || newLocation.redirection.first == 302 ||
+					newLocation.redirection.first == 303 || newLocation.redirection.first == 307 || newLocation.redirection.first == 308))
+					throw std::invalid_argument("Invalid argument in Redirection");
+				if (newLocation.redirection.first != 204 && newLocation.redirection.first != 400 && newLocation.redirection.first != 402 &&
+				newLocation.redirection.first != 403 && newLocation.redirection.first != 404 && newLocation.redirection.first != 405 &&
+				newLocation.redirection.first != 406 && newLocation.redirection.first != 408 && newLocation.redirection.first != 410 &&
+				newLocation.redirection.first != 411 && newLocation.redirection.first != 413 && newLocation.redirection.first != 416 &&
+				newLocation.redirection.first != 500 && newLocation.redirection.first != 501 && newLocation.redirection.first != 502 &&
+				newLocation.redirection.first != 503 && newLocation.redirection.first != 504 && newLocation.redirection.first != 307 &&
+				newLocation.redirection.first != 308 && newLocation.redirection.first != 301 && newLocation.redirection.first != 302 &&
+				newLocation.redirection.first != 303)
+					throw std::invalid_argument("Redirection code has to be 204, 301, 302, 303, 307, 308, 400, 402 — 406, 408, 410, 411, 413, 416, and 500 — 504");
+				if (i != readParam.at(index).size()){
+					size_t j = i + 1;
+					for (;i < readParam.at(index).size() && readParam.at(index).at(i) != ' '; i++)
+						;
+					newLocation.redirection.second = readParam.at(index).substr(j, i - j);
+				}
+				
+			}
+			else
+				throw std::invalid_argument("No return");
+
+		}
 		else if ((!readParam.at(index).compare(0, 7, "method "))){
 			if (readParam.at(index).size() > 6)
 				for (size_t i = 7; readParam.at(index)[i] ;){
@@ -162,10 +195,10 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 			throw std::invalid_argument("invalid argument in Location " + path);
 		}
 	}
-	if (newLocation.method.size() == 0)
+	if (newLocation.method.size() == 0 && newLocation.redirection.first == 0)
 		throw std::invalid_argument("Missing method in Location " + path);
-	if (newLocation.root.size() == 0)
-		throw std::invalid_argument("Missing root in Location " + path);
+	if (newLocation.root.size() == 0 && newLocation.redirection.first == 0)
+		throw std::invalid_argument("Missing root in Location " + path );
 	newServer.locations[path] = newLocation;
 	return index;
 }
