@@ -24,9 +24,6 @@ URI::URI(std::string uri, std::string location, std::string root){
 			break;
 		}
 	}
-	std::cout << "Path: " << path << std::endl;
-	std::cout << "Query: " << query << std::endl;
-	//std::cout << "Fragment: " << fragment << std::endl;
 }
 
 void URI::parseQuery() {
@@ -44,16 +41,9 @@ void URI::parseQuery() {
 			j = i;
 		}
 	}
-	// for (size_t i = 0 ;  i < queryName.size() ; i++) {
-    //  	std::cout << queryName.at(i);
-	//  	std::cout << " = ";
-	//  	std::cout << queryValue.at(i);
-  	//  	std::cout << '\n';
-	// }
 }
 
 void URI::parsePath() {
-	std::cout << "Path: " << path << std::endl;
 	for (size_t i = 1; i < path.size(); i++) {
 		if (path.at(i) == '/' && path.at(i - 1) == '/')
 			path.erase(i, 1);

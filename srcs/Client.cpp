@@ -59,6 +59,7 @@ void    Client::parseRequestString()
 	std::string         line;
 	size_t				pos;
 
+	
 	pos = requestString.find("\r\n");
 	line = requestString.substr(0, pos);
 	requestString.erase(0, pos + 2);

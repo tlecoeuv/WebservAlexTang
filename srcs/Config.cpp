@@ -85,15 +85,17 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 
 	newLocation.redirection.first = 0;
 	std::string path;
-	if (!readParam.at(index).compare(9, 2, "/ ")){
+	if (!readParam.at(index).compare(9, 2, "/ "))
 		path = "/";
-	}
 	else if (!readParam.at(index).compare(9, 1, "/")){
 		path = readParam.at(index).substr(9);
 		path.erase(path.end() - 2, path.end());
 	}
 	else 
-		throw std::out_of_range("No location path");
+		throw std::invalid_argument("No location path");
+	if (newServer.locations.find(path) != newServer.locations.end())
+		throw std::invalid_argument("Locations can't have the same name");
+	newLocation.max_body = "65535";
 	while (readParam.at(++index).size() && readParam.at(index).compare(0, 1, "}")){
 		if ((!readParam.at(index).compare(0, 5, "index"))){
 			if (newLocation.index.size() != 0)
@@ -134,7 +136,7 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 				throw std::invalid_argument("No cgi_path");
 		}
 		else if ((!readParam.at(index).compare(0, 9, "max_body "))){
-			if (newLocation.max_body.size() != 0)
+			if (newLocation.max_body != "65535")
 				throw std::invalid_argument("max_body is set several times");
 			if (readParam.at(index).size() > 8)
 				newLocation.max_body = readParam.at(index).substr(9);

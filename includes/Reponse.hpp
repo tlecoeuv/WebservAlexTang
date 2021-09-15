@@ -53,6 +53,7 @@ class 	Reponse {
 		void		printResponse();
 		bool		CGIcapacity(std::string path, Location location);
 		std::string	directory_contents(const char *directory_path, std::string tmpUri);
+		void		multiPartUpload(Request request, std::map<std::string, std::string> info);
 };
 
 #endif

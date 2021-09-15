@@ -2,7 +2,7 @@
 
 Reponse::Reponse(Request r, Server s, int cfd): request(r), locations(s.locations), clientfd(cfd), server(s) {
 	std::string tmpUri = request.uri;
-	std::cout << tmpUri << std::endl;
+
 	autoindex = 0;
 	if (tmpUri.size() > 1 && tmpUri[tmpUri.size() - 1] == '/')
 			tmpUri.pop_back();
@@ -123,8 +123,9 @@ void Reponse::methodPOST(std::map<std::string, std::string> info, Request reques
 		methodError(info, 413);
 		return ;
 	}
-	std::cout << "request.body: " << request.body << std::endl;
-	if ((stat(info["path"].c_str(), &buf)) == 0){
+	if (request.headers["Content-Type"].substr(0, 19) == "multipart/form-data")
+		multiPartUpload(request, info);
+	else if ((stat(info["path"].c_str(), &buf)) == 0){
 		if (S_ISREG(buf.st_mode)){
 			int fd = open(info["path"].c_str(), O_WRONLY | O_TRUNC, 0644);
 			write(fd, request.body.c_str(), request.body.size());
@@ -363,7 +364,6 @@ std::string		Reponse::directory_contents(const char *directory_path, std::string
 	struct stat buf;
 
 	tmpUri =  tmpUri.substr(0, tmpUri.find_first_of('?'));
-	std::cout << "tmpUri 2: " << tmpUri << std::endl;
 	dh = opendir(directory_path);
 	if (tmpUri != "/")
 		tmpUri += "/";
@@ -402,7 +402,6 @@ std::string		Reponse::directory_contents(const char *directory_path, std::string
 }
 
 void Reponse::getRedirection(Location location){
-	std::cout << "test: "<< header << std::endl;
 	if (location.redirection.first == 301 || location.redirection.first == 302 || location.redirection.first == 303 ||
 		location.redirection.first == 307 || location.redirection.first == 308){
 		header += "HTTP/1.1 " + std::to_string(location.redirection.first);
@@ -429,4 +428,77 @@ void Reponse::getRedirection(Location location){
 		header += location.redirection.second;
 	}
 	printResponse();
+}
+
+std::vector<std::string>	splitDeux(std::string str, std::string delimiter)
+{
+	std::vector<std::string>	vec;
+	size_t						pos = 0;
+	std::string					token;
+
+	while ((pos = str.find(delimiter)) != std::string::npos)
+	{
+		token = str.substr(0, pos);
+		vec.push_back(token);
+		str.erase(0, pos + delimiter.length());
+	}
+	if (str.size() > 0)
+		vec.push_back(str);
+	return (vec);
+}
+#include <errno.h>
+#include <stdio.h>
+void Reponse::multiPartUpload(Request request, std::map<std::string, std::string> info){
+	size_t i = request.headers["Content-Type"].find("boundary=") + 9;
+	std::string nameboundary = request.headers["Content-Type"].substr(i, request.headers["Content-Type"].size() - i);
+	std::vector<std::string> body = splitDeux(request.body,"\n");
+	for (i = 0; i < request.body.size();){
+		if (body[i].find(nameboundary) != std::string::npos){
+			if (body[i][body[i].find(nameboundary) + nameboundary.size() + 1] == '_')
+				break;
+			i++;
+			size_t j = body[i].find("filename=");
+			if (j == std::string::npos)
+				while (i < body.size() && body[i].find(nameboundary) == std::string::npos)
+					i++;
+			else {
+				std::string filename = body[i].substr(j + 10, body[i].find_last_of("\"") - (j + 10));
+				if (filename.size() == 0)
+					while (i < body.size() && body[i].find(nameboundary) == std::string::npos)
+						i++;
+				else {
+					std::string path = info["path"] + "/upload/" + filename;
+					while(body[i].size() != 1) {
+						if (body[i].find("Content-Type: image/jpeg") != std::string::npos)
+							return methodError(info, 415);
+						i++;
+					}
+					i++;
+					struct stat buf;
+					int fd;
+					if ((stat(path.c_str(), &buf)) == 0){
+						if (S_ISREG(buf.st_mode))
+							fd = open(path.c_str(), O_WRONLY | O_TRUNC, S_IRWXU);
+						else
+							return methodError(info, 415);
+					}
+					else
+						fd = open(path.c_str(), O_WRONLY | O_APPEND | O_CREAT, S_IRWXU);
+					while (i < request.body.size() && body[i].find(nameboundary) == std::string::npos){
+						write(fd, body[i].c_str(), body[i].size());
+						write(fd, "\n", 1);
+						i++;
+					}
+					close(fd);
+				}
+			}
+
+		}
+		else 
+			break ;
+	}
+	header = "HTTP/1.1 201 Created\n";
+	header += "Content-Type: ";
+	header += info["Content-Type"];
+	header += "\nContent-Length: 0\n\n";
 }
