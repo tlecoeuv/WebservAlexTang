@@ -446,8 +446,7 @@ std::vector<std::string>	splitDeux(std::string str, std::string delimiter)
 		vec.push_back(str);
 	return (vec);
 }
-#include <errno.h>
-#include <stdio.h>
+
 void Reponse::multiPartUpload(Request request, std::map<std::string, std::string> info){
 	size_t i = request.headers["Content-Type"].find("boundary=") + 9;
 	std::string nameboundary = request.headers["Content-Type"].substr(i, request.headers["Content-Type"].size() - i);
