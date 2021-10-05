@@ -98,11 +98,9 @@ void Reponse::methodGet(std::map<std::string, std::string> info, std::string bod
 		header += "Content-Type: ";
 		header += info["Content-Type"];
 		header += "\nContent-Length: ";
-		std::cout << "AV 1" << std::endl;
 		char buffer[1000];
 		sprintf(buffer, "%lu", body.size());
 		header += buffer;
-		std::cout << "AV 2" << std::endl;
 		header += "\n\n";
 		header += body;
 		bodysize = body.size();
@@ -111,7 +109,7 @@ void Reponse::methodGet(std::map<std::string, std::string> info, std::string bod
 		bodysize = readBodyCGI(body).size();
 	if (max_body.size() && bodysize > atoi(max_body.c_str()))
 		methodError(info, 413);
-	printResponse();
+	//printResponse();
 }
 
 void Reponse::methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body, std::string body){
@@ -238,10 +236,8 @@ std::string Reponse::readBodyCGI(std::string body){
 			i++;
 	}
 	header += "\nContent-Length: ";
-	std::cout << "AV 2" << std::endl;
 	char buffer[1000];
 	sprintf(buffer, "%lu", body.substr(i, body.size() - i).size());
-	std::cout << "AP 2" << std::endl;
 	header += buffer;
 	header += "\n\n";
 	header += body.substr(i, body.size() - i);
@@ -251,9 +247,7 @@ std::string Reponse::readBodyCGI(std::string body){
 std::string Reponse::bodyError(std::string oldBody, int code) {
 	size_t start_pos = 0;
 	std::string value = "$1";
-	std::cout << "AV 3" << std::endl;
 	char buffer[1000];
-	std::cout << "AP 3" << std::endl;
 	sprintf(buffer, "%d", code);
 	std::string tmp = buffer;
 
@@ -274,20 +268,16 @@ std::string Reponse::bodyError(std::string oldBody, int code) {
 void Reponse::methodError(std::map<std::string, std::string> info, int code) {
 	std::string body;
 
-	std::cout << "AV 4" << std::endl;
 	char buffer[1000];
 	sprintf(buffer, "%d", code);
-	std::cout << "AP 4" << std::endl;
 	header = "HTTP/1.1 ";
 	header += buffer;
 	header += " " + getMessage(code);
 	header += "Content-Type: ";
 	header += info["Content-Type"];
 	header += "\nContent-Length: ";
-	std::cout << "AV 5" << std::endl;
 	body = bodyError(readFile("./www/error.html"), code);
 	sprintf(buffer, "%lu", body.size());
-	std::cout << "AV 5" << std::endl;
 	header += buffer;
 	header += "\n\n";
 	header += body;
@@ -425,10 +415,8 @@ std::string		Reponse::directory_contents(const char *directory_path, std::string
 void Reponse::getRedirection(Location location){
 	if (location.redirection.first == 301 || location.redirection.first == 302 || location.redirection.first == 303 ||
 		location.redirection.first == 307 || location.redirection.first == 308){
-		std::cout << "AV 6" << std::endl;
 		char buffer[1000];
 		sprintf(buffer, "%d", location.redirection.first);
-		std::cout << "AV 6" << std::endl;
 		header += "HTTP/1.1 ";
 		header += buffer;
 		header += " " + getMessage(location.redirection.first) + "\n";
@@ -436,9 +424,7 @@ void Reponse::getRedirection(Location location){
 		header += "Content-Type: text/html; charset=UTF-8\n\n";
 		header += "<HTML>\n<HEAD>\n	<meta http-equiv=\"content-type\" content=\"text/html;charset=utf-8\">\n";
 		header += "	<TITLE>Moved</TITLE>\n</HEAD>\n<BODY>\n";
-		std::cout << "AV 7" << std::endl;
 		sprintf(buffer, "%d", location.redirection.first);
-		std::cout << "AV 7" << std::endl;
 		header += "	<H1>";
 		header += buffer;
 		header += " Moved</H1>\n";
@@ -452,10 +438,8 @@ void Reponse::getRedirection(Location location){
 		methodError(info, location.redirection.first);
 	}
 	else {
-		std::cout << "AV 8" << std::endl;
 		char buffer[1000];
 		sprintf(buffer, "%d", location.redirection.first);
-		std::cout << "AV 8" << std::endl;
 		header += "HTTP/1.1 ";
 		header += buffer;
 		header += " " + getMessage(location.redirection.first) + "\n";
@@ -466,7 +450,7 @@ void Reponse::getRedirection(Location location){
 		header += "\n\n";
 		header += location.redirection.second;
 	}
-	printResponse();
+	//printResponse();
 }
 
 std::vector<std::string>	splitDeux(std::string str, std::string delimiter)
