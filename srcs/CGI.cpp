@@ -20,19 +20,22 @@ char**  CGI::headerCGI(std::string body, char ** argv) {
 	header.push_back("REQUEST_METHOD=" + request.method);
 	char buffer[1000];
 	sprintf(buffer, "%lu", body.length());
-	header.push_back("CONTENT_LENGTH=");
-	header.push_back(buffer);
+	std::string buf = "CONTENT_LENGTH=";
+	buf += buffer;
+	header.push_back(buf);
 	header.push_back("CONTENT_TYPE=" + getMIMEType(uri.path));
 	header.push_back("REMOTE_IDENT=");
 	header.push_back("REDIRECT_STATUS=200");
 	sprintf(buffer, "%d", clientfd);
-	header.push_back("REMOTE_ADDR=");
-	header.push_back(buffer);
+	buf = "REMOTE_ADDR=";
+	buf += buffer;
+	header.push_back(buf);
 	header.push_back((std::string)"PATH_INFO=" + argv[1]);
 	sprintf(buffer, "%d", server.port);
 	header.push_back((std::string)"SCRIPT_FILENAME=" + argv[1]);
-	header.push_back("SERVER_PORT=");
-	header.push_back(buffer);
+	buf = "SERVER_PORT=";
+	buf += buffer;
+	header.push_back(buf);
 	header.push_back("SERVER_PROTOCOL=HTTP/1.1");
 	//header.push_back("SERVER_SOFTWARE=webserv/1.0");
 	for (size_t k = 0; k < uri.queryName.size(); ++k) 
@@ -42,6 +45,7 @@ char**  CGI::headerCGI(std::string body, char ** argv) {
 		//std::cerr << header.at(i) << "_" <<std::endl;
 		tab[i] = strdup(header.at(i).c_str());
 	}
+	std::cerr <<std::endl;
 	tab[header.size()] = NULL;
 	return (tab);
 }

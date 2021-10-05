@@ -89,7 +89,6 @@ void Reponse::methodGet(std::map<std::string, std::string> info, std::string bod
 				body = directory_contents(info["path"].c_str(), uri);
 				info["Content-Type"] = "text/html";
 			}
-
 		}
 		catch (const std::exception &e){
 			std::cerr << "\033[31mError: " << e.what() << "\033[0m" << std::endl;
@@ -163,7 +162,8 @@ void Reponse::methodDelete(std::map<std::string, std::string> info) {
 	else
 		methodError(info, 404);
 }
-
+#include <errno.h>  
+#include <string.h>
 std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	pid_t	pid;
 	char	buffer[65536] = {0};
@@ -176,6 +176,8 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	std::string body;
 	
 	char ** argv = doArgv(path, uri);
+	std::cerr << argv[0] << std::endl;
+	std::cerr << argv[1] << std::endl;
 	if (request.body.size()){
 		cgi.body = request.body;
 	}
@@ -188,6 +190,7 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 		dup2(fd[0], STDIN_FILENO);
 		dup2(fd[1], STDOUT_FILENO);
 		execve(argv[0], argv, cgi.headerCGI(cgi.body, argv));
+		std::cerr << strerror(errno) << std::endl;
 		exit(0);
 	}
 	else {
@@ -214,11 +217,11 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 
 std::string Reponse::readBodyCGI(std::string body){
 	size_t i = 0;
-
+	std::cerr << "body; " << body <<std::endl<<std::endl;
 	for(; i < body.size();) {
 		if (body.substr(i, 14) == "Content-Type: " || body.substr(i, 14) == "Content-type: ") {
 			int j = 0;
-			while (body[i + j] != ';')
+			while (body[i + j] && (body[i + j] != ';' && body[i + j] != '\n'))
 				j++;
 			header += body.substr(i, j);
 			while (body[i] != '\r')
