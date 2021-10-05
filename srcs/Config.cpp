@@ -22,7 +22,7 @@ void Config::parametre(std::string conf){
 					if (newServer.port != -1)
 						throw std::invalid_argument("Port is set several times");
 					if (readParam.at(i).size() > 6 && readParam.at(i).substr(7).find_first_not_of("0123456789") == std::string::npos){
-						newServer.port = std::stoi(readParam.at(i).substr(7));
+						newServer.port = atoi(readParam.at(i).substr(7).c_str());
 						for (size_t j = 0; j < confServer.size() ; j++){
 							if (newServer.port == confServer.at(j).port)
 								throw std::invalid_argument("Same port has already been set");
@@ -107,7 +107,7 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 		}
 		else if ((!readParam.at(index).compare(0, 11, "auto_index "))){
 			if (readParam.at(index).size() > 10)
-				newLocation.auto_index = std::stoi(readParam.at(index).substr(11));
+				newLocation.auto_index = atoi(readParam.at(index).substr(11).c_str());
 			else
 				throw std::invalid_argument("No auto_index");
 		}
@@ -150,7 +150,7 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 					;
 				if (readParam.at(index).substr(7, i - 7).find_first_not_of("0123456789") != std::string::npos)
 					throw std::invalid_argument("Redirection code has invalid value");
-				newLocation.redirection.first = std::stoi(readParam.at(index).substr(7, i - 7));
+				newLocation.redirection.first = atoi(readParam.at(index).substr(7, i - 7).c_str());
 				if (i == readParam.at(index).size() && (newLocation.redirection.first == 301 || newLocation.redirection.first == 302 ||
 					newLocation.redirection.first == 303 || newLocation.redirection.first == 307 || newLocation.redirection.first == 308))
 					throw std::invalid_argument("Invalid argument in Redirection");
