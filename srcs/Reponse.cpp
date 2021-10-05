@@ -5,7 +5,7 @@ Reponse::Reponse(Request r, Server s, int cfd): request(r), locations(s.location
 
 	autoindex = 0;
 	if (tmpUri.size() > 1 && tmpUri[tmpUri.size() - 1] == '/')
-			tmpUri.erase(--tmpUri.end());
+		tmpUri.erase(--tmpUri.end());
 	while (tmpUri.size()) {
 		for (std::map<std::string, Location>::iterator it = locations.begin() ; it != locations.end(); ++it)
 			if (tmpUri == it->first){

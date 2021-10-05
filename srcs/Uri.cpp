@@ -4,7 +4,7 @@ URI::URI(std::string uri, std::string location, std::string root){
 	size_t i = 0;
 
 	if (root[root.size() - 1] == '/')
-		root.pop_back();
+		root.erase(--root.end());
 	if (root[0] == '.')
 		root = root.substr(1, root.size() - 1);
 	for (size_t j = 0; j < uri.size(); j++) {
