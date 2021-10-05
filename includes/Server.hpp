@@ -8,6 +8,8 @@
 #include <iostream>
 #include <netdb.h>
 #include <poll.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 /* Includes: */
 #include "Location.hpp"

@@ -6,6 +6,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <stdlib.h>
 
 /* Includes: */
 #include "Server.hpp"

@@ -45,7 +45,7 @@ Check list correction:
     -|V| Look at the request header and response header
     -|V| It should be compatible to serve a fully static website
     -|?| Try a wrong URL on the server
-    -|X| Try to list a directory
+    -|V| Try to list a directory
     -|?| Try a redirected URL
     -| | Try things
 

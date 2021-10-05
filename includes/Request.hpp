@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <stdlib.h>
 
 std::vector<std::string> fileToVector(std::string file, int conf);
 //https://maximilienandile.github.io/2016/09/30/Comprendre-les-headers-d-une-requete-HTTP/
