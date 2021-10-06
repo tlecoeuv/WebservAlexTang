@@ -18,7 +18,7 @@ Reponse::Reponse(Request r, Server s, int cfd): request(r), locations(s.location
 		if (tmpUri.size() > 1)
 			tmpUri.erase(--tmpUri.end());
 	}
-	std::cerr << "No location" << std::endl;
+	//std::cerr << "No location" << std::endl;
 	std::map<std::string, std::string> info;
 
 	info["Content-Type"] = "text/html";
@@ -91,7 +91,6 @@ void Reponse::methodGet(std::map<std::string, std::string> info, std::string bod
 			}
 		}
 		catch (const std::exception &e){
-			std::cerr << "\033[31mError: " << e.what() << "\033[0m" << std::endl;
 			methodError(info, 404);
 		}
 		header += "Content-Type: ";
@@ -162,8 +161,7 @@ void Reponse::methodDelete(std::map<std::string, std::string> info) {
 	else
 		methodError(info, 404);
 }
-#include <errno.h>  
-#include <string.h>
+
 std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	pid_t	pid;
 	char	buffer[65536] = {0};
@@ -176,8 +174,6 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 	std::string body;
 	
 	char ** argv = doArgv(path, uri);
-	std::cerr << argv[0] << std::endl;
-	std::cerr << argv[1] << std::endl;
 	if (request.body.size()){
 		cgi.body = request.body;
 	}
@@ -190,7 +186,6 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 		dup2(fd[0], STDIN_FILENO);
 		dup2(fd[1], STDOUT_FILENO);
 		execve(argv[0], argv, cgi.headerCGI(cgi.body, argv));
-		std::cerr << strerror(errno) << std::endl;
 		exit(0);
 	}
 	else {
@@ -217,7 +212,6 @@ std::string Reponse::methodCGI(CGI cgi, std::string path, URI uri) {
 
 std::string Reponse::readBodyCGI(std::string body){
 	size_t i = 0;
-	std::cerr << "body; " << body <<std::endl<<std::endl;
 	for(; i < body.size();) {
 		if (body.substr(i, 14) == "Content-Type: " || body.substr(i, 14) == "Content-type: ") {
 			int j = 0;
@@ -482,6 +476,8 @@ void Reponse::multiPartUpload(Request request, std::map<std::string, std::string
 			if (body[i][body[i].find(nameboundary) + nameboundary.size() + 1] == '_')
 				break;
 			i++;
+			if (i == body.size())
+				break ;
 			size_t j = body[i].find("filename=");
 			if (j == std::string::npos)
 				while (i < body.size() && body[i].find(nameboundary) == std::string::npos)

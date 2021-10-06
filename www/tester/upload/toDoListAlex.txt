@@ -1,6 +1,0 @@
-TO DO LIST:
-
-||decoder les uri (enlever le %20)
-||retrouver le fragment
-||execv les cgi => avec ou sans variables d'env
-|V|changer maniere detecter les methodesCGI en acceptant les querry et fragments

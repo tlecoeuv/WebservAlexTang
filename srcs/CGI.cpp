@@ -45,7 +45,7 @@ char**  CGI::headerCGI(std::string body, char ** argv) {
 		//std::cerr << header.at(i) << "_" <<std::endl;
 		tab[i] = strdup(header.at(i).c_str());
 	}
-	std::cerr <<std::endl;
+	//std::cerr <<std::endl;
 	tab[header.size()] = NULL;
 	return (tab);
 }
