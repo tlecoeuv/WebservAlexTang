@@ -473,11 +473,9 @@ void Reponse::multiPartUpload(Request request, std::map<std::string, std::string
 	std::vector<std::string> body = splitDeux(request.body,"\n");
 	for (i = 0; i < request.body.size();){
 		if (body[i].find(nameboundary) != std::string::npos){
-			if (body[i][body[i].find(nameboundary) + nameboundary.size() + 1] == '_')
+			if (body[i][body[i].find(nameboundary) + nameboundary.size() + 1] == '-')
 				break;
 			i++;
-			if (i == body.size())
-				break ;
 			size_t j = body[i].find("filename=");
 			if (j == std::string::npos)
 				while (i < body.size() && body[i].find(nameboundary) == std::string::npos)
