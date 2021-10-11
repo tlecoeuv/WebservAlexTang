@@ -12,7 +12,7 @@ struct Location {
 	bool						auto_index;
 	std::string					cgi;
 	std::string					cgi_path;
-	std::string					max_body;
+	std::string					max_size;
 	std::pair<int, std::string>	redirection;
 };
 

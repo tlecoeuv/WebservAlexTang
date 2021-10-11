@@ -39,8 +39,8 @@ class 	Reponse {
 		Reponse(){};
 		Reponse(Request r, Server s, int cfd);
 		void		makeReponse(Request request, Location location, std::string tmpUri);
-		void		methodGet(std::map<std::string, std::string> info, std::string body, std::string max_body, std::string uri);
-		void		methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body, std::string body);
+		void		methodGet(std::map<std::string, std::string> info, std::string body, std::string max_size, std::string uri);
+		void		methodPOST(std::map<std::string, std::string> info, Request request, std::string max_size, std::string body);
 		void		methodDelete(std::map<std::string, std::string> info);
 		std::string	methodCGI(CGI cgi, std::string path, URI uri);
 		std::string	readBodyCGI(std::string body);

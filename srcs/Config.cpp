@@ -66,8 +66,10 @@ void Config::parametre(std::string conf){
 			}
 			if (newServer.name.size() == 0)
 				throw std::invalid_argument("Server has no name");
-			if (newServer.port == -1)
+			if (newServer.port <= -1)
 				throw std::invalid_argument("Server has no port");
+			if (newServer.port < 0 || newServer.port > 65,535)
+				throw std::invalid_argument("port of the server need to be >= 1 and <= 65,535");
 			if (newServer.host.size() == 0)
 				throw std::invalid_argument("Server has no host");
 			if (newServer.error.size() == 0)
@@ -95,7 +97,7 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 		throw std::invalid_argument("No location path");
 	if (newServer.locations.find(path) != newServer.locations.end())
 		throw std::invalid_argument("Locations can't have the same name");
-	newLocation.max_body = "65535";
+	newLocation.max_size = "65535";
 	while (readParam.at(++index).size() && readParam.at(index).compare(0, 1, "}")){
 		if ((!readParam.at(index).compare(0, 5, "index"))){
 			if (newLocation.index.size() != 0)
@@ -106,6 +108,8 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 				throw std::invalid_argument("No index");
 		}
 		else if ((!readParam.at(index).compare(0, 11, "auto_index "))){
+			if (atoi(readParam.at(index).substr(11).c_str()) != 0 && atoi(readParam.at(index).substr(11).c_str()) != 1)
+					throw std::invalid_argument("auto_index need to be set on 0 or 1");
 			if (readParam.at(index).size() > 10)
 				newLocation.auto_index = atoi(readParam.at(index).substr(11).c_str());
 			else
@@ -135,13 +139,13 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 			else
 				throw std::invalid_argument("No cgi_path");
 		}
-		else if ((!readParam.at(index).compare(0, 9, "max_body "))){
-			if (newLocation.max_body != "65535")
-				throw std::invalid_argument("max_body is set several times");
+		else if ((!readParam.at(index).compare(0, 9, "max_size "))){
+			if (newLocation.max_size != "65535")
+				throw std::invalid_argument("max_size is set several times");
 			if (readParam.at(index).size() > 8)
-				newLocation.max_body = readParam.at(index).substr(9);
+				newLocation.max_size = readParam.at(index).substr(9);
 			else
-				throw std::invalid_argument("No max_body");
+				throw std::invalid_argument("No max_size");
 		}
 		else if ((!readParam.at(index).compare(0, 7, "return "))){
 			if (readParam.at(index).size() > 6){
@@ -183,7 +187,7 @@ int Config::configLocation(int index, std::vector<std::string> readParam, Server
 					while(i < readParam.at(index).size() && readParam.at(index)[i] != ' ')
 						i++;
 					newMethod = readParam.at(index).substr(j, i - j);
-					if (newMethod == "GET" || newMethod == "POST" || newMethod == "delete")
+					if (newMethod == "GET" || newMethod == "POST" || newMethod == "DELETE")
 						newLocation.method.push_back(newMethod);
 					else
 						throw std::invalid_argument("Wrong method: " + newMethod);

@@ -62,11 +62,11 @@ void Reponse::makeReponse(Request request, Location location, std::string tmpUri
 		body = methodCGI(cgi, location.cgi_path, uri);
 	}
 	if (request.method == "GET")
-		methodGet(info, body, location.max_body, request.uri);
+		methodGet(info, body, location.max_size, request.uri);
 	else if (request.method == "DELETE")
 		methodDelete(info);
 	else if (request.method == "POST")
-		methodPOST(info, request, location.max_body, body);
+		methodPOST(info, request, location.max_size, body);
 }
 
 int Reponse::acceptedMethod(std::string requestMethod, std::vector<std::string> locationsMethod){
@@ -77,7 +77,7 @@ int Reponse::acceptedMethod(std::string requestMethod, std::vector<std::string> 
 	return 0;
 }
 
-void Reponse::methodGet(std::map<std::string, std::string> info, std::string body, std::string max_body, std::string uri){ 
+void Reponse::methodGet(std::map<std::string, std::string> info, std::string body, std::string max_size, std::string uri){ 
 	int bodysize;
 
 	info["Content-Type"] = getMIMEType(info["path"]);
@@ -105,21 +105,21 @@ void Reponse::methodGet(std::map<std::string, std::string> info, std::string bod
 	}
 	else
 		bodysize = readBodyCGI(body).size();
-	if (max_body.size() && bodysize > atoi(max_body.c_str()))
+	if (max_size.size() && bodysize > atoi(max_size.c_str()))
 		methodError(info, 413);
 	//printResponse();
 }
 
-void Reponse::methodPOST(std::map<std::string, std::string> info, Request request, std::string max_body, std::string body){
+void Reponse::methodPOST(std::map<std::string, std::string> info, Request request, std::string max_size, std::string body){
 	struct stat buf;
 
-	if (max_body.size() && (int)request.body.size() > atoi(max_body.c_str())) {
+	if (max_size.size() && (int)request.body.size() > atoi(max_size.c_str())) {
 		methodError(info, 413);
 		return ;
 	}
 	if (body.size() != 0)
 		request.body = readBodyCGI(body);
-	if (max_body.size() && (int)request.body.size() > atoi(max_body.c_str())){
+	if (max_size.size() && (int)request.body.size() > atoi(max_size.c_str())){
 		methodError(info, 413);
 		return ;
 	}
