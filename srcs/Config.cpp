@@ -68,7 +68,7 @@ void Config::parametre(std::string conf){
 				throw std::invalid_argument("Server has no name");
 			if (newServer.port <= -1)
 				throw std::invalid_argument("Server has no port");
-			if (newServer.port < 0 || newServer.port > 65,535)
+			if (newServer.port < 0 || newServer.port > 65535)
 				throw std::invalid_argument("port of the server need to be >= 1 and <= 65,535");
 			if (newServer.host.size() == 0)
 				throw std::invalid_argument("Server has no host");

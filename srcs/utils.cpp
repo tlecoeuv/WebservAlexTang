@@ -3,6 +3,45 @@
 #include <unistd.h>
 #include <vector>
 #include <fstream>
+#include <string>
+#include <string.h>
+#include <sys/time.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+std::string		get_time(void)
+{
+	struct timeval 	tv;
+    struct tm 		time;
+	struct timezone tz;
+	char 			buf[64] = {'\0'};
+	const char* 	fmt = "%a, %d %b %Y %X GMT";
+	char			str[64] = {'\0'};;
+
+	gettimeofday(&tv, &tz);
+	std::cout << "yo get_time1!" << std::endl;
+	sprintf(str, "%ld", tv.tv_sec);
+	std::cout << "yo get_time2!" << std::endl;
+	strptime(str, "%s", &time);
+	strftime(buf, sizeof(buf), fmt, &time);
+	return (buf);
+}
+
+size_t			get_time_diff(std::string time_string)
+{
+	struct tm		time;
+	struct tm		*now;
+	struct timeval	now_timeval;
+	size_t			diff = 0;
+
+	strptime(time_string.c_str(), "%a, %d %b %Y %T", &time);
+	gettimeofday(&now_timeval, NULL);
+	now = localtime(&now_timeval.tv_sec);
+	diff = (now->tm_hour - time.tm_hour) * 3600;
+	diff += (now->tm_min - time.tm_min) * 60;
+	diff += (now->tm_sec - time.tm_sec);
+	return (diff);
+}
 
 std::string trim(const std::string& str, const std::string& whitespace) {
 	size_t begin = str.find_first_not_of(whitespace);
